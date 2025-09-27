@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th9 26, 2025 lúc 04:12 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.0.30
+-- Host: 127.0.0.1
+-- Generation Time: Sep 27, 2025 at 05:49 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `ecommercedb`
+-- Database: `ecommercedb`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `advertisement`
+-- Table structure for table `advertisement`
 --
 
 CREATE TABLE `advertisement` (
@@ -40,7 +40,7 @@ CREATE TABLE `advertisement` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `cart`
+-- Table structure for table `cart`
 --
 
 CREATE TABLE `cart` (
@@ -51,18 +51,19 @@ CREATE TABLE `cart` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `cart`
+-- Dumping data for table `cart`
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `created_at`, `updated_at`) VALUES
 (1, 1, '2025-09-17 10:52:14', '2025-09-17 10:52:14'),
 (2, 3, '2025-09-17 12:14:48', '2025-09-17 12:14:48'),
-(3, 10, '2025-09-20 14:57:48', '2025-09-20 14:57:48');
+(3, 10, '2025-09-20 14:57:48', '2025-09-20 14:57:48'),
+(4, 12, '2025-09-27 15:14:13', '2025-09-27 15:14:13');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `cart_items`
+-- Table structure for table `cart_items`
 --
 
 CREATE TABLE `cart_items` (
@@ -74,7 +75,7 @@ CREATE TABLE `cart_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `cart_items`
+-- Dumping data for table `cart_items`
 --
 
 INSERT INTO `cart_items` (`id`, `cart_id`, `product_id`, `quantity`, `added_at`) VALUES
@@ -83,7 +84,7 @@ INSERT INTO `cart_items` (`id`, `cart_id`, `product_id`, `quantity`, `added_at`)
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `category`
+-- Table structure for table `category`
 --
 
 CREATE TABLE `category` (
@@ -95,26 +96,22 @@ CREATE TABLE `category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `category`
+-- Dumping data for table `category`
 --
 
 INSERT INTO `category` (`id`, `product_type`, `description`, `is_active`, `created_at`) VALUES
-(1, 'Điện thoại', NULL, 1, '2025-09-09 15:09:31'),
-(2, 'Laptop', NULL, 1, '2025-09-09 15:09:31'),
-(3, 'Đồng hồ', NULL, 1, '2025-09-09 15:09:31'),
-(4, 'Phụ kiện', NULL, 1, '2025-09-09 15:09:31'),
-(5, 'Điện thoại', 'Các loại điện thoại smartphone', 1, '2025-09-23 08:22:05'),
-(6, 'Laptop', 'Máy tính xách tay', 1, '2025-09-23 08:22:05'),
-(7, 'Tablet', 'Máy tính bảng', 1, '2025-09-23 08:22:05'),
-(8, 'Phụ kiện điện thoại', 'Ốp lưng, sạc, pin dự phòng...', 1, '2025-09-23 08:22:05'),
-(9, 'Phụ kiện laptop', 'Chuột, bàn phím, balo...', 1, '2025-09-23 08:22:05'),
-(10, 'Âm thanh', 'Tai nghe, loa bluetooth...', 1, '2025-09-23 08:22:05'),
-(11, 'Đồng hồ', 'Đồng hồ thông minh', 1, '2025-09-23 08:22:05');
+(1, 'Điện thoại', 'Điện thoại thông minh \r\n', 1, '2025-09-09 15:09:31'),
+(2, 'Laptop', 'Máy tính xách tay', 1, '2025-09-09 15:09:31'),
+(3, 'Đồng hồ', 'Đồng hồ thông minh', 1, '2025-09-09 15:09:31'),
+(4, 'Phụ kiện Laptop', 'Bàn phím, chuột,...', 1, '2025-09-09 15:09:31'),
+(5, 'Tablet\r\n', 'Máy tính bảng\r\n\r\n', 1, '2025-09-23 08:22:05'),
+(6, 'Phụ kiện điện thoại\r\n', 'Sạc, pin dự phòng, ốp lưng,...', 1, '2025-09-23 08:22:05'),
+(7, 'Âm thanh \r\n', 'Tai nghe, loa bluetooth...', 1, '2025-09-23 08:22:05');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `dim_date`
+-- Table structure for table `dim_date`
 --
 
 CREATE TABLE `dim_date` (
@@ -129,7 +126,7 @@ CREATE TABLE `dim_date` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `dim_product`
+-- Table structure for table `dim_product`
 --
 
 CREATE TABLE `dim_product` (
@@ -141,7 +138,7 @@ CREATE TABLE `dim_product` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `fact_sales`
+-- Table structure for table `fact_sales`
 --
 
 CREATE TABLE `fact_sales` (
@@ -156,7 +153,7 @@ CREATE TABLE `fact_sales` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `login_attempts`
+-- Table structure for table `login_attempts`
 --
 
 CREATE TABLE `login_attempts` (
@@ -168,20 +165,22 @@ CREATE TABLE `login_attempts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `login_attempts`
+-- Dumping data for table `login_attempts`
 --
 
 INSERT INTO `login_attempts` (`id`, `user_id`, `attempts`, `last_attempt`, `locked_until`) VALUES
 (1, 3, 0, '2025-09-26 14:08:52', NULL),
-(2, 1, 0, '2025-09-26 11:13:31', NULL),
+(2, 1, 0, '2025-09-27 08:47:32', '2025-09-27 03:52:32'),
 (3, 7, 0, '2025-09-12 16:52:37', NULL),
 (4, 10, 0, '2025-09-20 14:57:42', NULL),
-(5, 11, 0, '2025-09-26 10:22:05', NULL);
+(5, 11, 0, '2025-09-26 10:22:05', NULL),
+(6, 8, 1, '2025-09-27 08:24:20', NULL),
+(7, 12, 0, '2025-09-27 11:27:55', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `orders`
+-- Table structure for table `orders`
 --
 
 CREATE TABLE `orders` (
@@ -207,7 +206,7 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `orders`
+-- Dumping data for table `orders`
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `fullname`, `email`, `phone`, `address`, `note`, `status`, `order_date`, `total`, `updated_at`, `payment_method`, `paypal_order_id`, `payment_status`, `momo_transaction_id`, `paypal_transaction_id`, `paypal_payer_email`, `payment_date`, `created_at`) VALUES
@@ -295,7 +294,7 @@ INSERT INTO `orders` (`id`, `user_id`, `fullname`, `email`, `phone`, `address`, 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order_details`
+-- Table structure for table `order_details`
 --
 
 CREATE TABLE `order_details` (
@@ -308,7 +307,7 @@ CREATE TABLE `order_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `order_details`
+-- Dumping data for table `order_details`
 --
 
 INSERT INTO `order_details` (`id`, `order_id`, `product_id`, `price`, `quantity`, `total`) VALUES
@@ -410,7 +409,7 @@ INSERT INTO `order_details` (`id`, `order_id`, `product_id`, `price`, `quantity`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `payments`
+-- Table structure for table `payments`
 --
 
 CREATE TABLE `payments` (
@@ -425,7 +424,7 @@ CREATE TABLE `payments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `payments`
+-- Dumping data for table `payments`
 --
 
 INSERT INTO `payments` (`id`, `order_id`, `payment_method`, `amount`, `status`, `transaction_id`, `created_at`, `updated_at`) VALUES
@@ -455,7 +454,7 @@ INSERT INTO `payments` (`id`, `order_id`, `payment_method`, `amount`, `status`, 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `permission`
+-- Table structure for table `permission`
 --
 
 CREATE TABLE `permission` (
@@ -467,7 +466,7 @@ CREATE TABLE `permission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `permission`
+-- Dumping data for table `permission`
 --
 
 INSERT INTO `permission` (`id`, `permission_name`, `description`, `permission_group`, `created_at`) VALUES
@@ -501,7 +500,7 @@ INSERT INTO `permission` (`id`, `permission_name`, `description`, `permission_gr
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `product`
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -519,87 +518,131 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `product`
+-- Dumping data for table `product`
 --
 
 INSERT INTO `product` (`id`, `category_id`, `product_name`, `product_type`, `price`, `thumbnail`, `description`, `stock_quantity`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Samsung Galaxy S25 Ultra', 'Samsung', 33390000.00, 's25-ultra.webp', 'Flagship Samsung 2025: Snapdragon 8 Elite, RAM 12GB, bộ nhớ 256GB, pin 5000mAh, camera 200MP', 120, 1, '2025-09-09 15:10:34', '2025-09-17 10:22:55'),
-(2, 1, 'Samsung Galaxy S25+', 'Samsung', 27990000.00, '', 'Màn hình Dynamic AMOLED 6.7\", RAM 8GB, bộ nhớ 256GB, hỗ trợ 5G, camera chính 50MP', 135, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(3, 1, 'Samsung Galaxy Z Flip6', 'Samsung', 25990000.00, '', 'Điện thoại màn hình gập 6.7\", RAM 8GB, bộ nhớ 256GB, camera kép 50MP', 145, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(4, 1, 'Samsung Galaxy A56 5G', 'Samsung', 10990000.00, '', 'Điện thoại tầm trung với màn hình 6.6\", Snapdragon 7s Gen 2, camera 50MP, pin 5000mAh', 138, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(5, 1, 'Samsung Galaxy A26 5G', 'Samsung', 7990000.00, '', 'Màn hình 6.5\", chip Exynos 1330, RAM 6GB, bộ nhớ 128GB, camera kép 50MP, pin 5000mAh', 142, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(6, 1, 'iPhone 16 Pro Max', 'Apple', 34990000.00, '', 'iPhone cao cấp 2025: chip A18 Pro, màn hình 6.9\", RAM 8GB, camera 48MP, pin 5000mAh', 140, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(7, 1, 'iPhone 16 Pro', 'Apple', 30990000.00, '', 'Màn hình 6.3\", chip A18 Pro, RAM 8GB, bộ nhớ 256GB, hỗ trợ 5G', 133, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(8, 1, 'iPhone 16 Plus', 'Apple', 26990000.00, '', 'Chip A17 Bionic, RAM 6GB, camera kép 48MP, pin 4900mAh', 115, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(9, 1, 'iPhone 15 Pro Max', 'Apple', 28990000.00, '', 'Màn hình 6.7\", RAM 8GB, bộ nhớ 256GB, camera tele 5x zoom', 148, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(10, 1, 'iPhone 15', 'Apple', 18990000.00, '', 'Màn hình 6.1\", RAM 6GB, bộ nhớ 128GB, hỗ trợ 5G, camera kép 48MP', 125, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(11, 1, 'Xiaomi 15 Ultra', 'Xiaomi', 24990000.00, '', 'Màn hình AMOLED 6.7\", RAM 16GB, pin 5000mAh, sạc nhanh 120W, camera 200MP', 121, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(12, 1, 'Xiaomi 15 Pro', 'Xiaomi', 20990000.00, '', 'Flagship Xiaomi với màn hình 6.73\", RAM 12GB, pin 4880mAh, sạc nhanh 120W', 137, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(13, 1, 'Xiaomi 14T Pro', 'Xiaomi', 15990000.00, '', 'Màn hình AMOLED 6.7\", RAM 12GB, pin 5000mAh, sạc nhanh 120W', 149, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(14, 1, 'Xiaomi Redmi Note 14 Pro+', 'Xiaomi', 9990000.00, '', 'Màn hình AMOLED 6.67\", Dimensity 8200 Ultra, RAM 8GB, pin 5000mAh', 118, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(15, 1, 'Xiaomi Redmi Note 14', 'Xiaomi', 6990000.00, '', 'Màn hình AMOLED 6.6\", Snapdragon 7s Gen 2, RAM 6GB, camera 100MP', 132, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(16, 1, 'Realme GT 6 Pro', 'Realme', 18990000.00, '', 'Flagship Realme với màn hình 6.78\", RAM 16GB, pin 5500mAh, sạc nhanh 120W', 127, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(17, 1, 'Realme GT Neo 6', 'Realme', 13990000.00, '', 'Màn hình AMOLED 6.7\", RAM 12GB, pin 5000mAh, camera 50MP', 146, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(18, 1, 'Realme 13 Pro+', 'Realme', 10990000.00, '', 'Màn hình AMOLED 6.7\", Snapdragon 7s Gen 3, RAM 8GB, pin 5000mAh', 141, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(19, 1, 'Realme 12+', 'Realme', 7990000.00, '', 'Chip Dimensity 7050, RAM 8GB, bộ nhớ 256GB, camera 50MP OIS', 119, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(20, 1, 'Realme C67', 'Realme', 5990000.00, '', 'Màn hình AMOLED 6.6\", RAM 6GB, camera 108MP, pin 5000mAh, sạc 33W', 134, 1, '2025-09-09 15:10:34', '2025-09-09 16:01:50'),
-(21, 3, 'Samsung Galaxy Watch 8', 'Samsung', 10448155.00, '', 'Galaxy Watch 8: màn AMOLED 1.6″, lưu trữ 16 GB, pin 410mAh, GPS, chống nước 5ATM', 129, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(22, 3, 'Samsung Galaxy Watch 8 Classic', 'Samsung', 14599115.00, '', 'Màn 1.5″ AMOLED, viền xoay bằng thép không gỉ, pin 300mAh, LTE tùy chọn', 149, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(23, 3, 'Samsung Galaxy Watch Ultra', 'Samsung', 15306665.00, '', 'Màn 1.9″ Super AMOLED, khung titanium, pin lớn 599mAh, GPS độ chính xác cao', 107, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(24, 3, 'Samsung Galaxy Watch 7', 'Samsung', 6132100.00, '', 'Thiết kế mỏng nhẹ, GPS, theo dõi giấc ngủ, pin dùng cả ngày', 143, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(25, 3, 'Samsung Galaxy Watch FE', 'Samsung', 4717000.00, '', 'Màn AMOLED, GPS, thiết kế đơn giản, pin 300mAh, nhẹ và giá mềm', 140, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(26, 3, 'Apple Watch Series 9 (Nhôm)', 'Apple', 10499000.00, '', 'Siri chạy trên thiết bị, chip S9 SiP, màn Retina LTPO OLED luôn bật, chống nước 50 m', 120, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(27, 3, 'Apple Watch Series 9 (Thép)', 'Apple', 18990000.00, '', 'Vỏ thép không gỉ, màn sáng 2000 nits, nút Action, phần mềm watchOS 10', 131, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(28, 3, 'Apple Watch Series 10', 'Apple', 10799000.00, '', 'Phiên bản GPS + Cellular, cảm biến ECG, màn Retina OLED luôn bật, Titan bền', 143, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(29, 3, 'Apple Watch Ultra 2', 'Apple', 18990000.00, '', 'Pin 36 giờ, tính năng thể thao chuyên sâu, nút Tác Vụ tùy chỉnh, chống nước 100 m', 123, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(30, 3, 'Apple Watch SE (thế hệ 2)', 'Apple', 6990000.00, '', 'Chip S8 giống Watch 8, GPS, theo dõi sức khỏe, giá dễ chịu', 137, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(31, 3, 'Xiaomi Redmi Watch 5 Lite', 'Xiaomi', 1270000.00, '', 'Màn 1.55″ TFT, pin dùng 10 ngày, theo dõi nhịp tim & giấc ngủ', 114, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
+(1, 1, 'Samsung Galaxy S25 Ultra', 'Samsung', 33390000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.8sXrMDzfUzGmgfBHlUTzDQHaHa%3Fpid%3DApi&f=1&ipt=8898ce839b7a3bc21062701bc21fe151a4b6c19c5c6b3f226d09d8ee7d36f588&ipo=images', 'Chip Snapdragon 8 Elite, RAM 12GB, Bộ nhớ 256GB, pin 5000mAh, camera 200MP', 120, 1, '2025-09-09 15:10:34', '2025-09-27 15:05:37'),
+(2, 1, 'Samsung Galaxy S25+', 'Samsung', 27990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.dF1MVcmpQuZgqXwQ_b2bjQHaHa%3Fpid%3DApi&f=1&ipt=5a15a7e1f4d1c8065eb9f2ca1bf4e57754ec1aac1fdb9f820d221af3cb49b34c', 'Màn hình Dynamic AMOLED 6.7\", RAM 8GB, bộ nhớ 256GB, hỗ trợ 5G, camera chính 50MP', 135, 1, '2025-09-09 15:10:34', '2025-09-27 15:00:38'),
+(3, 1, 'Samsung Galaxy Z Flip6', 'Samsung', 25990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.brUvttGgaQw_Eqm1hofFTgHaHa%3Fpid%3DApi&f=1&ipt=73a03cb765d57960a81450cc29c4d97e87168c570cc006a74beb2ac82131693f&ipo=images', 'Điện thoại màn hình gập 6.7\", RAM 8GB, bộ nhớ 256GB, camera kép 50MP', 145, 1, '2025-09-09 15:10:34', '2025-09-27 15:01:13'),
+(4, 1, 'Samsung Galaxy A56 5G', 'Samsung', 10990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.digit.in%2FSamsung-Galaxy-A56-5G.jpg&f=1&nofb=1&ipt=8521bad01433e67d4103bc7f2f98c85a376d140dbfd62a7e49783c141143105a', 'Điện thoại tầm trung với màn hình 6.6\", Snapdragon 7s Gen 2, camera 50MP, pin 5000mAh', 138, 1, '2025-09-09 15:10:34', '2025-09-27 15:02:37'),
+(5, 1, 'Samsung Galaxy A26 5G', 'Samsung', 7990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.0hs1AOiYixZXhEvXBLQ6YQHaHa%3Fpid%3DApi&f=1&ipt=cebea96ca910ae2111d9203549cfbfd2b49595d72601ac45875371b3d3afccd7&ipo=images', 'Màn hình 6.5\", chip Exynos 1330, RAM 6GB, bộ nhớ 128GB, camera kép 50MP, pin 5000mAh', 142, 1, '2025-09-09 15:10:34', '2025-09-27 15:03:01'),
+(6, 1, 'iPhone 16 Pro Max', 'Apple', 34990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.5cV6Bxiey16ZNKucbF2r0QHaHa%3Fpid%3DApi&f=1&ipt=bd18c4eb1e5e01379b6df04c0de2757f8252280912845f1a6e350ff789d9da82&ipo=images\"]', 'iPhone cao cấp 2025: chip A18 Pro, màn hình 6.9\", RAM 8GB, camera 48MP, pin 5000mAh', 140, 1, '2025-09-09 15:10:34', '2025-09-27 13:43:12'),
+(7, 1, 'iPhone 16 Pro', 'Apple', 30990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.UjRL9K4hrXt4zHzQVG0Q4gHaHa%3Fpid%3DApi&f=1&ipt=6b8431297bba1a6d3c058318aa2595b5b542391ea218b2978a1d0824c0bf5a6c&ipo=images', 'Màn hình 6.3\", chip A18 Pro, RAM 8GB, bộ nhớ 256GB, hỗ trợ 5G', 133, 1, '2025-09-09 15:10:34', '2025-09-27 10:38:16'),
+(8, 1, 'iPhone 16 Plus', 'Apple', 26990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.kiGkC1mRT0mXLso5irnYhQHaHa%3Fpid%3DApi&f=1&ipt=b156110262dc0b7b4684aa73a105184c50d45e9edd15ec3cad6a480e663e7cef&ipo=images', 'Chip A17 Bionic, RAM 6GB, camera kép 48MP, pin 4900mAh', 115, 1, '2025-09-09 15:10:34', '2025-09-27 10:38:38'),
+(9, 1, 'iPhone 15 Pro Max', 'Apple', 28990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.tz9uisfpGy-dUhoaEXfnYAHaHa%3Fpid%3DApi&f=1&ipt=3f22a25d95b9e302392aa725ade738ec177fb58c0960532864685c8ef0b60ecb&ipo=images', 'Màn hình 6.7\", RAM 8GB, bộ nhớ 256GB, camera tele 5x zoom', 148, 1, '2025-09-09 15:10:34', '2025-09-27 09:48:47'),
+(10, 1, 'iPhone 15', 'Apple', 18990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.8g3BYnJflFVP5PsEHRGNawHaHa%3Fpid%3DApi&f=1&ipt=ae2defc2d96e4c4aeeb6432513fb87e7a422792abd7723dc1006fd3678e05532&ipo=images', 'Màn hình 6.1\", RAM 6GB, bộ nhớ 128GB, hỗ trợ 5G, camera kép 48MP', 125, 1, '2025-09-09 15:10:34', '2025-09-27 10:37:54'),
+(11, 1, 'Xiaomi 15 Ultra', 'Xiaomi', 24990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.3xzS6kkGkw5vKvTghRowawHaFA%3Fpid%3DApi&f=1&ipt=b9a12d0036f12e2046355a235e61258175cc0ee3777d50b1c514280add0e446b&ipo=images', 'Màn hình AMOLED 6.7\", RAM 16GB, pin 5000mAh, sạc nhanh 120W, camera 200MP', 121, 1, '2025-09-09 15:10:34', '2025-09-27 10:49:11'),
+(12, 1, 'Xiaomi 15 Pro', 'Xiaomi', 20990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.vWKKMv8yoa3pTB_d29bAcQHaE0%3Fpid%3DApi&f=1&ipt=5ed8972bf6d489d3d5a7f575c92e4b484a9b1a0d15af1b3f3bef299ce417bc28&ipo=images', 'Flagship Xiaomi với màn hình 6.73\", RAM 12GB, pin 4880mAh, sạc nhanh 120W', 137, 1, '2025-09-09 15:10:34', '2025-09-27 10:39:16'),
+(13, 1, 'Xiaomi 14T Pro', 'Xiaomi', 15990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.Qf4JqPZQkEhzGI_3jzk3rgHaHa%3Fpid%3DApi&f=1&ipt=69366681761933130981254113d64781658612817b702d0514a2171180c3f330&ipo=images', 'Màn hình AMOLED 6.7\", RAM 12GB, pin 5000mAh, sạc nhanh 120W', 149, 1, '2025-09-09 15:10:34', '2025-09-27 10:49:30'),
+(14, 1, 'Xiaomi Redmi Note 14 Pro+', 'Xiaomi', 9990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.9DGS5xRh02OZ_QjqPxCL2gHaHa%3Fpid%3DApi&f=1&ipt=824d21c81b0a58cb73ce588b38e4b471f27bd7d231f53ddcd244247096e18d0b&ipo=images', 'Màn hình AMOLED 6.67\", Dimensity 8200 Ultra, RAM 8GB, pin 5000mAh', 118, 1, '2025-09-09 15:10:34', '2025-09-27 10:48:49'),
+(15, 1, 'Xiaomi Redmi Note 14', 'Xiaomi', 6990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.4VssxC7IH1t5p_qVoFERNgHaHa%3Fpid%3DApi&f=1&ipt=e98682489f1758ba4b63c4dc99083cd575f2a39a9f9dd265b198f5e389eaf018&ipo=images', 'Màn hình AMOLED 6.6\", Snapdragon 7s Gen 2, RAM 6GB, camera 100MP', 132, 1, '2025-09-09 15:10:34', '2025-09-27 10:49:50'),
+(16, 1, 'Realme GT 6 Pro', 'Realme', 18990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.5vrARveOex9Hn766LCZyzwHaHa%3Fpid%3DApi&f=1&ipt=4c40b92df9ecb69d1e8acb667f70c04f8716705b59cfa5297e3011b9783c5e5c&ipo=images', 'Flagship Realme với màn hình 6.78\", RAM 16GB, pin 5500mAh, sạc nhanh 120W', 127, 1, '2025-09-09 15:10:34', '2025-09-27 10:48:24'),
+(17, 1, 'Realme GT Neo 6', 'Realme', 13990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.XWeRqIIopVj_F_yCJZgEzwHaHa%3Fpid%3DApi&f=1&ipt=2996499fbf525ca23dc0cf51b206690c650a1c2bf455353ce236f8e0b4bc40ce&ipo=images', 'Màn hình AMOLED 6.7\", RAM 12GB, pin 5000mAh, camera 50MP', 146, 1, '2025-09-09 15:10:34', '2025-09-27 10:50:35'),
+(18, 1, 'Realme 13 Pro+', 'Realme', 10990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.S2CUw_p-6oMaBJl8nTzRcAHaHa%3Fpid%3DApi&f=1&ipt=8a10bf72f7fd298536a73ab018e948887d313cde090bb8fa5f22504a6de18290&ipo=images', 'Màn hình AMOLED 6.7\", Snapdragon 7s Gen 3, RAM 8GB, pin 5000mAh', 141, 1, '2025-09-09 15:10:34', '2025-09-27 10:47:55'),
+(19, 1, 'Realme 12+', 'Realme', 7990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.rQi_g_ciBHmO2Y08M2SMVAHaHa%3Fpid%3DApi&f=1&ipt=6487ed2b407d92df1dfa37a39959f792db2fca0575b0a6262992f3d57fa90eec&ipo=images\"]', 'Chip Dimensity 7050, RAM 8GB, bộ nhớ 256GB, camera 50MP OIS', 119, 1, '2025-09-09 15:10:34', '2025-09-27 10:41:09'),
+(20, 1, 'Realme C67', 'Realme', 5990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.De4Nf8MZcI5cXusnzHEpMQHaHa%3Fpid%3DApi&f=1&ipt=36d8f8acad451b6967a79a7dc0b22213af489d8061789e6fd8abb69cc44dae3b&ipo=images', 'Màn hình AMOLED 6.6\", RAM 6GB, camera 108MP, pin 5000mAh, sạc 33W', 134, 1, '2025-09-09 15:10:34', '2025-09-27 10:40:25'),
+(21, 3, 'Samsung Galaxy Watch 8', 'Samsung', 10449000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.1saLIkoOf_pj6bG-RzKlegHaHa%3Fpid%3DApi&f=1&ipt=43e0ebbb5d3a5786970b40805bc5c923f6eaf3b05133e1d05ac39b629ae19dfc&ipo=images', 'Galaxy Watch 8: màn AMOLED 1.6″, lưu trữ 16 GB, pin 410mAh, GPS, chống nước 5ATM', 129, 1, '2025-09-09 15:10:59', '2025-09-27 15:08:07'),
+(22, 3, 'Samsung Galaxy Watch 8 Classic', 'Samsung', 14600000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.techspot.com%2Fimages%2Fproducts%2F2023%2Fwearables%2Forg%2F2023-08-10-product.jpg&f=1&nofb=1&ipt=f867288b092060579b99d4d61db7a526800ee6b7d064e60e9e531fece596db7d\"]', 'Màn 1.5″ AMOLED, viền xoay bằng thép không gỉ, pin 300mAh, LTE tùy chọn', 149, 1, '2025-09-09 15:10:59', '2025-09-27 14:45:43'),
+(23, 3, 'Samsung Galaxy Watch Ultra', 'Samsung', 15307000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.fSJZtBIl310Vcubi6VfCPwHaEK%3Fpid%3DApi&f=1&ipt=d77457564667b61c0a80e1c4a70ed3061cf2c665a292c44cb30dfac9467dac9d&ipo=images', 'Màn 1.9″ Super AMOLED, khung titanium, pin lớn 599mAh, GPS độ chính xác cao', 107, 1, '2025-09-09 15:10:59', '2025-09-27 11:32:03'),
+(24, 3, 'Samsung Galaxy Watch 7', 'Samsung', 6133000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.7qqAE8L_86rkkC_lRypjtgHaHa%3Fpid%3DApi&f=1&ipt=e2f4228134694495172ef3acc5f1db79f5ff7f8ed15e9647010dd73d831ecb09&ipo=images', 'Thiết kế mỏng nhẹ, GPS, theo dõi giấc ngủ, pin dùng cả ngày', 143, 1, '2025-09-09 15:10:59', '2025-09-27 11:32:32'),
+(25, 3, 'Samsung Galaxy Watch FE', 'Samsung', 4717000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.dAqbjCLHfX-pQFz-Q603RQHaHa%3Fpid%3DApi&f=1&ipt=a4275e1fd82146d1f27c1883ddeaab05e046a97dc4b92222d6f58a6f1c7db36d&ipo=images', 'Màn AMOLED, GPS, thiết kế đơn giản, pin 300mAh, nhẹ và giá mềm', 140, 1, '2025-09-09 15:10:59', '2025-09-27 11:32:52'),
+(26, 3, 'Apple Watch Series 9 (Nhôm)', 'Apple', 10499000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.D9xo-9wqGzDM40vC-HU8IAHaE8%3Fpid%3DApi&f=1&ipt=df16a047b90beee88488c25ec489117aeb1368bc852c898d4d9d0664066a628b&ipo=images', 'Siri chạy trên thiết bị, chip S9 SiP, màn Retina LTPO OLED luôn bật, chống nước 50 m', 120, 1, '2025-09-09 15:10:59', '2025-09-27 11:33:08'),
+(27, 3, 'Apple Watch Series 9 (Thép)', 'Apple', 18990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.Zhd0iuWgW-Ii42OLXumREAHaHa%3Fpid%3DApi&f=1&ipt=ce7b230aab3846569b6505e5f41d191f9b9d725b701fa175d0736831cd018626&ipo=images', 'Vỏ thép không gỉ, màn sáng 2000 nits, nút Action, phần mềm watchOS 10', 131, 1, '2025-09-09 15:10:59', '2025-09-27 11:33:32'),
+(28, 3, 'Apple Watch Series 10', 'Apple', 10799000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.ACqs-9EFhCn6Re3oKvnCVwHaHa%3Fpid%3DApi&f=1&ipt=8d61d52bacc8d397d9a9a88b62f4c172f85630dcb892b25f463f1aca31ab7a6b&ipo=images', 'Phiên bản GPS + Cellular, cảm biến ECG, màn Retina OLED luôn bật, Titan bền', 143, 1, '2025-09-09 15:10:59', '2025-09-27 11:33:52'),
+(29, 3, 'Apple Watch Ultra 2', 'Apple', 18990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.apple.com%2Fnewsroom%2Fimages%2F2023%2F09%2Fapple-unveils-apple-watch-ultra-2%2Farticle%2FApple-Watch-Ultra-2-Ocean-Band-Orange-230912_inline.jpg.large_2x.jpg&f=1&nofb=1&ipt=8045d6ace9bf577b9', 'Pin 36 giờ, tính năng thể thao chuyên sâu, nút Tác Vụ tùy chỉnh, chống nước 100 m', 123, 1, '2025-09-09 15:10:59', '2025-09-27 11:38:30'),
+(30, 3, 'Apple Watch SE (thế hệ 2)', 'Apple', 6990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.2JyI_wgd3x06IMuiSTD3IgHaHa%3Fpid%3DApi&f=1&ipt=9d378497584c116c413353bdec7f0f7ebd7b4f77cdea75dd80dd5908157f932c&ipo=images', 'Chip S8 giống Watch 8, GPS, theo dõi sức khỏe, giá dễ chịu', 137, 1, '2025-09-09 15:10:59', '2025-09-27 11:39:45'),
+(31, 3, 'Xiaomi Redmi Watch 5 Lite', 'Xiaomi', 1270000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.AUb0QSsdiJeDwhRtMsvOxgHaHa%3Fpid%3DApi&f=1&ipt=d358c0517c40c7f14e9320584291327a61d617b42f4e0ecfc4b68a45f1bc12ab&ipo=images', 'Màn 1.55″ TFT, pin dùng 10 ngày, theo dõi nhịp tim & giấc ngủ', 114, 1, '2025-09-09 15:10:59', '2025-09-27 11:40:06'),
 (32, 3, 'Xiaomi Redmi Watch 5 Active', 'Xiaomi', 2830500.00, '', 'Màn AMOLED 1.91″, GPS tích hợp, vỏ nhẹ, pin dùng nhiều ngày', 111, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(33, 3, 'Xiaomi Watch S4 Sport', 'Xiaomi', 6485875.00, '', 'Màn 1.96″ AMOLED lớn, theo dõi nhịp tim, pin 480mAh, GPS+BT', 112, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(34, 3, 'Xiaomi Watch 2 Pro', 'Xiaomi', 6721725.00, '', 'Always-on display, Wi-Fi, GPS chính xác, pin 500mAh', 130, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(35, 3, 'Xiaomi Watch S1 Active', 'Xiaomi', 4952850.00, '', 'Màn AMOLED 1.43″, pin 420mAh, vỏ nhẹ, nhiều mặt đồng hồ', 113, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(36, 3, 'Realme Watch 3 Pro', 'Realme', 1890000.00, '', 'GPS kép, màn 1.78″, pin dùng 14 ngày, theo dõi thể thao', 126, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(37, 3, 'Realme Band 3', 'Realme', 890000.00, '', 'Vòng tay nhỏ gọn, theo dõi nhịp tim, SPO2, pin 12 ngày', 140, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(38, 3, 'Realme Watch 3', 'Realme', 1690000.00, '', 'Màn 1.8″ IPS, theo dõi sức khỏe, pin 288mAh dùng 10 ngày', 120, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(39, 3, 'Realme Watch S100', 'Realme', 2190000.00, '', 'Khung thép, màn OLED, pin dùng tới 10 ngày, nhiều chế độ tập luyện', 134, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(40, 3, 'Realme Watch 2 Pro', 'Realme', 2990000.00, '', 'GPS hai băng tần, màn 1.75″, pin 390mAh, theo dõi nâng cao', 106, 1, '2025-09-09 15:10:59', '2025-09-09 16:01:50'),
-(41, 2, 'MacBook Air M2 2023', 'Laptop', 32990000.00, 'macbook-air-m2.jpg', 'Laptop siêu mỏng nhẹ, chip Apple M2.', 10, 1, '2025-09-23 08:22:20', '2025-09-23 08:22:20'),
-(42, 2, 'MacBook Pro 14 M3', 'Laptop', 49990000.00, 'macbook-pro-14-m3.jpg', 'Hiệu năng mạnh mẽ với chip Apple M3.', 8, 1, '2025-09-23 08:22:20', '2025-09-23 08:22:20'),
-(43, 2, 'Dell XPS 13 Plus', 'Laptop', 38990000.00, 'dell-xps-13-plus.jpg', 'Ultrabook cao cấp, màn OLED.', 12, 1, '2025-09-23 08:22:20', '2025-09-23 08:22:20'),
-(44, 2, 'Asus ROG Strix G16', 'Laptop', 44990000.00, 'asus-rog-strix-g16.jpg', 'Laptop gaming, RTX 4070, màn 240Hz.', 7, 1, '2025-09-23 08:22:20', '2025-09-23 08:22:20'),
-(45, 3, 'iPad Pro 12.9 2022', 'Tablet', 28990000.00, 'ipad-pro-12-9.jpg', 'Màn hình Liquid Retina XDR, chip M2.', 10, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(46, 3, 'Samsung Galaxy Tab S9', 'Tablet', 19990000.00, 'galaxy-tab-s9.jpg', 'Máy tính bảng AMOLED 120Hz.', 12, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(47, 3, 'Xiaomi Pad 6 Pro', 'Tablet', 999990000.00, '[\"http://localhost/ecommerce_api/public/images/products/47/xiaomi-pad-6-pro.jpg\"]', 'Máy tính bảng cấu hình mạnh.', 20, 1, '2025-09-23 08:23:05', '2025-09-25 19:06:27'),
-(48, 3, 'Lenovo Tab P11 Pro', 'Tablet', 11990000.00, 'lenovo-tab-p11-pro.jpg', 'Màn OLED, pin 8600mAh.', 15, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(49, 4, 'Ốp lưng iPhone 15', 'Phụ kiện điện thoại', 299000.00, 'oplung-iphone15.jpg', 'Ốp lưng chống sốc cho iPhone 15.', 50, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(50, 4, 'Sạc nhanh Anker 30W', 'Phụ kiện điện thoại', 690000.00, 'sac-nhanh-anker.jpg', 'Củ sạc nhanh Anker PowerPort, công suất 30W.', 40, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(51, 4, 'Pin dự phòng Baseus 20000mAh', 'Phụ kiện điện thoại', 890000.00, 'baseus-20000.jpg', 'Sạc dự phòng dung lượng lớn, hỗ trợ sạc nhanh.', 35, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(52, 4, 'Tai nghe có dây Xiaomi', 'Phụ kiện điện thoại', 250000.00, 'xiaomi-wired-earphone.jpg', 'Tai nghe nhét tai giá rẻ, âm thanh tốt.', 60, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(53, 4, 'Cáp sạc Type-C to Lightning', 'Phụ kiện điện thoại', 350000.00, 'cable-typec-lightning.jpg', 'Cáp sạc hỗ trợ PD cho iPhone.', 70, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(54, 4, 'Kính cường lực iPhone 15', 'Phụ kiện điện thoại', 199000.00, 'glass-iphone15.jpg', 'Kính cường lực chống xước, chống vỡ.', 80, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(55, 5, 'Chuột Logitech MX Master 3S', 'Phụ kiện laptop', 2499000.00, 'logitech-mx3s.jpg', 'Chuột không dây cao cấp, pin sạc lâu.', 20, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(56, 5, 'Bàn phím cơ Keychron K2', 'Phụ kiện laptop', 1899000.00, 'keychron-k2.jpg', 'Bàn phím cơ bluetooth, layout 75%.', 25, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(57, 5, 'Balo Asus TUF Gaming', 'Phụ kiện laptop', 1290000.00, 'balo-asus-tuf.jpg', 'Balo chống sốc, chuyên dụng cho gaming laptop.', 15, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(58, 5, 'Đế tản nhiệt Cooler Master', 'Phụ kiện laptop', 990000.00, 'cooler-master-stand.jpg', 'Đế tản nhiệt với quạt lớn, hiệu quả cao.', 18, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(59, 5, 'Ổ cứng di động Samsung T7 1TB', 'Phụ kiện laptop', 3299000.00, 'samsung-t7-ssd.jpg', 'SSD di động tốc độ cao, hỗ trợ USB 3.2.', 12, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(60, 5, 'Hub chuyển đổi Ugreen 7-in-1', 'Phụ kiện laptop', 890000.00, 'ugreen-hub.jpg', 'Hub USB-C đa năng cho Macbook/Laptop.', 30, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(61, 6, 'Sony WH-1000XM5', 'Âm thanh', 9990000.00, 'sony-wh1000xm5.jpg', 'Tai nghe chống ồn hàng đầu, pin 30h.', 10, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(62, 6, 'Apple AirPods Pro 2', 'Âm thanh', 6490000.00, 'airpods-pro-2.jpg', 'Tai nghe true wireless cao cấp của Apple.', 25, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(63, 6, 'Loa JBL Charge 5', 'Âm thanh', 3990000.00, 'jbl-charge-5.jpg', 'Loa bluetooth chống nước, pin 20h.', 20, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(64, 6, 'Tai nghe Razer BlackShark V2', 'Âm thanh', 2990000.00, 'razer-blackshark-v2.jpg', 'Tai nghe gaming với micro siêu nhạy.', 15, 1, '2025-09-23 08:23:05', '2025-09-23 08:23:05'),
-(65, 2, 'HP Spectre x360 14', 'Laptop', 37990000.00, 'hp-spectre-x360.jpg', 'Laptop 2-in-1 cao cấp, màn OLED cảm ứng.', 9, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(66, 2, 'Lenovo ThinkPad X1 Carbon Gen 11', 'Laptop', 42990000.00, 'lenovo-x1-carbon-gen11.jpg', 'Doanh nhân cao cấp, siêu bền, pin lâu.', 11, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(67, 3, 'iPad Air 5 2022', 'Tablet', 16990000.00, 'ipad-air-5.jpg', 'Chip M1, hỗ trợ Apple Pencil 2.', 14, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(68, 3, 'Huawei MatePad 11 2023', 'Tablet', 12990000.00, 'huawei-matepad-11.jpg', 'Màn hình 120Hz, hỗ trợ bút M-Pencil.', 16, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(69, 6, 'Loa Bose SoundLink Flex', 'Âm thanh', 4990000.00, 'bose-soundlink-flex.jpg', 'Loa nhỏ gọn, âm bass mạnh.', 12, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(70, 6, 'Tai nghe Sennheiser Momentum 4 Wireless', 'Âm thanh', 8990000.00, 'sennheiser-momentum4.jpg', 'Tai nghe chống ồn, pin 60h.', 8, 1, '2025-09-23 08:23:20', '2025-09-23 08:23:20'),
-(71, 7, 'Garmin Forerunner 265', 'Đồng hồ', 8990000.00, 'garmin-forerunner-265.jpg', 'Đồng hồ thể thao GPS chuyên nghiệp.', 10, 1, '2025-09-23 08:23:21', '2025-09-23 08:23:21'),
-(72, 7, 'Amazfit GTR 4', 'Đồng hồ', 4990000.00, 'amazfit-gtr4.jpg', 'Pin 14 ngày, theo dõi sức khỏe toàn diện.', 20, 1, '2025-09-23 08:23:21', '2025-09-23 08:23:21');
+(33, 3, 'Xiaomi Watch S4 Sport', 'Xiaomi', 6455000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.EiTNzG49-3v_K60HAuWO7gHaHa%3Fpid%3DApi&f=1&ipt=95ef4544e899698de5bf72a8980f04718b33697af32ea5830832dd77344aa1fd&ipo=images', 'Màn 1.96″ AMOLED lớn, theo dõi nhịp tim, pin 480mAh, GPS+BT', 112, 1, '2025-09-09 15:10:59', '2025-09-27 11:41:03'),
+(34, 3, 'Xiaomi Watch 2 Pro', 'Xiaomi', 6722000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.j_69VziYKAJRs1ycMqp2gAHaHa%3Fpid%3DApi&f=1&ipt=9539d9fe6b56b98e8099932082f7d2b8692020b15113fdb6df26096ca8660c7e&ipo=images', 'Always-on display, Wi-Fi, GPS chính xác, pin 500mAh', 130, 1, '2025-09-09 15:10:59', '2025-09-27 11:40:43'),
+(35, 3, 'Xiaomi Watch S1 Active', 'Xiaomi', 4953000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.xizOMLVwoTBQQPoK-2cAiQHaHN%3Fpid%3DApi&f=1&ipt=4cc69161dd91cce18ecfc3de551b67df4df150713903a3cbc9ae8d026269d4b3&ipo=images', 'Màn AMOLED 1.43″, pin 420mAh, vỏ nhẹ, nhiều mặt đồng hồ', 113, 1, '2025-09-09 15:10:59', '2025-09-27 11:41:23'),
+(36, 3, 'Realme Watch 3 Pro', 'Realme', 1890000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.Gl8_49vZu2WrSCMTcrBrowAAAA%3Fpid%3DApi&f=1&ipt=4d87ca42ab5a18c700ceca3c5830b92d631d96cbf3af41a9301411a1c4fcb265&ipo=images', 'GPS kép, màn 1.78″, pin dùng 14 ngày, theo dõi thể thao', 126, 1, '2025-09-09 15:10:59', '2025-09-27 11:42:39'),
+(37, 3, 'Realme Band 3', 'Realme', 890000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.3u2Q0VnsiSjDCaVJxHVjUwHaHa%3Fpid%3DApi&f=1&ipt=89472c9a1a5af87a917c67b829161fde4e529617300f0afd9eeaeefbeadc7e00&ipo=images', 'Vòng tay nhỏ gọn, theo dõi nhịp tim, SPO2, pin 12 ngày', 140, 1, '2025-09-09 15:10:59', '2025-09-27 11:43:04'),
+(38, 3, 'Realme Watch 3', 'Realme', 1690000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.FCB36jtloa5t4IzqjO2dYAHaHa%3Fpid%3DApi&f=1&ipt=bff9fbe385cc54b901a4cf966c9b349320eb21dea4b87832ae62ee27843b9df5&ipo=images', 'Màn 1.8″ IPS, theo dõi sức khỏe, pin 288mAh dùng 10 ngày', 120, 1, '2025-09-09 15:10:59', '2025-09-27 11:43:28'),
+(39, 3, 'Realme Watch S100', 'Realme', 2190000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.k_RbqEyW_OuZoqWv-NDWqgHaHa%3Fpid%3DApi&f=1&ipt=fc2597a5061cd792a829c0afece3437090ccc76aa13017772cbd52e71ac8b7ef&ipo=images', 'Khung thép, màn OLED, pin dùng tới 10 ngày, nhiều chế độ tập luyện', 134, 1, '2025-09-09 15:10:59', '2025-09-27 11:44:07'),
+(40, 3, 'Realme Watch 2 Pro', 'Realme', 2990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.3u2Q0VnsiSjDCaVJxHVjUwHaHa%3Fpid%3DApi&f=1&ipt=89472c9a1a5af87a917c67b829161fde4e529617300f0afd9eeaeefbeadc7e00&ipo=images', 'GPS hai băng tần, màn 1.75″, pin 390mAh, theo dõi nâng cao', 106, 1, '2025-09-09 15:10:59', '2025-09-27 11:44:28'),
+(41, 2, 'MacBook Air M2 2023', 'Laptop', 32990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.G6u4WLh-CWnEVkjIIw7_DwHaFj%3Fpid%3DApi&f=1&ipt=f90501b1e43ce45a4d8201c3f33e7bf9cbeab7759d385e9b36af06dc70760aed&ipo=images', 'Laptop siêu mỏng nhẹ, chip Apple M2.', 10, 1, '2025-09-23 08:22:20', '2025-09-27 09:40:09'),
+(42, 2, 'MacBook Pro 14 M3', 'Laptop', 49990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.XKP7SbUO8Dm5bTl1Xo3sOwHaET%3Fpid%3DApi&f=1&ipt=7e3e70eb7202f514019a04055dea1beb6a3a59b722bf76526c49bb42d0b2a22a&ipo=images', 'Hiệu năng mạnh mẽ với chip Apple M3.', 8, 1, '2025-09-23 08:22:20', '2025-09-27 09:41:02'),
+(43, 2, 'Dell XPS 13 Plus', 'Laptop', 38990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIF.z9PxoUQetx5GVBmP8QBirg%3Fpid%3DApi&f=1&ipt=554f52d361184aa8537abac0625bf13b9b158d0ec833c8887d55c6cd5c6aac5b&ipo=images', 'Ultrabook cao cấp, màn OLED.', 12, 1, '2025-09-23 08:22:20', '2025-09-27 09:41:53'),
+(44, 2, 'Asus ROG Strix G16', 'Laptop', 44990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.vqUi86yjCuS-cH7YieO7uwHaHa%3Fpid%3DApi&f=1&ipt=6fdbbbe27912d80efb71111f4a68feb31bf3d1dc535132d54c8a76bb7add7579&ipo=images', 'Laptop gaming, RTX 4070, màn 240Hz.', 7, 1, '2025-09-23 08:22:20', '2025-09-27 09:42:12'),
+(45, 5, 'iPad Pro 12.9 2022', 'Tablet', 28990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.d0nYFunsrtoas63ZJQWf2QHaHa%3Fpid%3DApi&f=1&ipt=bed66537329a58f9e3856bdfc5b7f32b86f502568eac2df1952f52d4f36d4245&ipo=images\"]', 'Màn hình Liquid Retina XDR, chip M2.', 10, 1, '2025-09-23 08:23:05', '2025-09-27 11:29:11'),
+(46, 5, 'Samsung Galaxy Tab S9', 'Tablet', 19990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.vuwNJYYfHU1L5C32tMiSUgHaFB%3Fpid%3DApi&f=1&ipt=7c7ddad4438698bfd012785e749f614f2eed130a11b9eb6823cfc29d1928ce40&ipo=images\"]', 'Máy tính bảng AMOLED 120Hz.', 12, 1, '2025-09-23 08:23:05', '2025-09-27 10:59:56'),
+(47, 5, 'Xiaomi Pad 6 Pro', 'Tablet', 999990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.smMVOhDcv-beQr-etjmrxwHaHa%3Fpid%3DApi&f=1&ipt=3d97d603cf74d82ec91e578f41efcf31aece5c7dfd6864d037ceab67f25d4dd7&ipo=images\"]', 'Máy tính bảng cấu hình mạnh.', 20, 1, '2025-09-23 08:23:05', '2025-09-27 11:29:20'),
+(48, 5, 'Lenovo Tab P11 Pro', 'Tablet', 11990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.P614opziuIzgug1GGvCWpwHaE8%3Fpid%3DApi&f=1&ipt=09b0e838b44920ce6dea0a051ffa22b853c9b14574c81c6a129cef836ebe53e2&ipo=images\"]', 'Màn OLED, pin 8600mAh.', 15, 1, '2025-09-23 08:23:05', '2025-09-27 11:29:28'),
+(49, 6, 'Ốp lưng iPhone 15', 'Phụ kiện điện thoại', 1299000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.KCBzHFpGuMAd4y7GzYmUZAHaHa%3Fpid%3DApi&f=1&ipt=36ff820bf541f8b0a2980838fe617032fef2c22dfe900b80fdcd855439725b19&ipo=images\"]', 'Ốp lưng chống sốc cho iPhone 15.', 50, 1, '2025-09-23 08:23:05', '2025-09-27 14:41:04'),
+(50, 6, 'Sạc nhanh Anker 30W', 'Phụ kiện điện thoại', 1690000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.AxdfUIksZzfY27envRPD2gHaHa%3Fpid%3DApi&f=1&ipt=2bbe7b21f912e99bc7172bb7e79578738eb85759a5531582a02e94f787cabd28&ipo=images\"]', 'Củ sạc nhanh Anker PowerPort, công suất 30W.', 40, 1, '2025-09-23 08:23:05', '2025-09-27 14:43:02'),
+(51, 6, 'Pin dự phòng Baseus 20000mAh', 'Phụ kiện điện thoại', 1090000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.fCKLH3qglOkobq1hVqg4rwHaHa%3Fpid%3DApi&f=1&ipt=280b562af3db15f155ad6a62a96301a8d27a5d4bb68c2d1dd4feca8435696d19&ipo=images\"]', 'Sạc dự phòng dung lượng lớn, hỗ trợ sạc nhanh.', 35, 1, '2025-09-23 08:23:05', '2025-09-27 14:43:47'),
+(52, 7, 'Tai nghe có dây Xiaomi', 'Phụ kiện điện thoại', 250000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP._bfyzanzGqpRjed8GSu21QHaHa%3Fpid%3DApi&f=1&ipt=b924a1d104f10f5a68769ecfc6166344a8a0773ad2183fc104a40b9f6d6e836d&ipo=images\"]', 'Tai nghe nhét tai giá rẻ, âm thanh tốt.', 60, 0, '2025-09-23 08:23:05', '2025-09-27 14:44:28'),
+(53, 6, 'Cáp sạc Type-C to Lightning', 'Phụ kiện điện thoại', 1350000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.WTq_JRChcg0NVc2Mm-GNTwHaHa%3Fpid%3DApi&f=1&ipt=7a2270a1d6d39fd7d4ce5ddcd3a8a64e08a29076e20e8020f19cce608c71db29&ipo=images\"]', 'Cáp sạc hỗ trợ PD cho iPhone.', 70, 1, '2025-09-23 08:23:05', '2025-09-27 14:42:26'),
+(54, 6, 'Kính cường lực iPhone 15', 'Phụ kiện điện thoại', 199000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.54PsncZfDZIxgM7D6FtpoQHaHa%3Fpid%3DApi&f=1&ipt=6b1ca82e5dbc0f050a951f7e393517ea74db7ff7fe436347be0cddcee5dc7632&ipo=images\"]', 'Kính cường lực chống xước, chống vỡ.', 80, 0, '2025-09-23 08:23:05', '2025-09-27 14:42:15'),
+(55, 4, 'Chuột Logitech MX Master 3S', 'Phụ kiện laptop', 2499000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.xlW1fySrpIspqUI0tpGsswHaHa%3Fpid%3DApi&f=1&ipt=1d65bcedba84a001a05f3ceaff17e6b427d59ac3f7658bb79166796813285d82&ipo=images\"]', 'Chuột không dây cao cấp, pin sạc lâu.', 20, 1, '2025-09-23 08:23:05', '2025-09-27 11:00:34'),
+(56, 4, 'Bàn phím cơ Keychron K2', 'Phụ kiện laptop', 1899000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.BKf7H4DWW9BC10pUilZZ2AHaHa%3Fpid%3DApi&f=1&ipt=f84116fabf9ead2c9ca260a7d622b02ecedd6fb22593d051b3bab012268fc83f&ipo=images\"]', 'Bàn phím cơ bluetooth, layout 75%.', 25, 1, '2025-09-23 08:23:05', '2025-09-27 11:00:26'),
+(57, 5, 'Balo Asus TUF Gaming', 'Phụ kiện laptop', 1290000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.gHObHIro4LbBEIbO4_kA3wHaHa%3Fpid%3DApi&f=1&ipt=d0918734064be899ac9d116cb9c79fc5f82e9c3379808e8c34f218edc2affe33&ipo=images', 'Balo chống sốc, chuyên dụng cho gaming laptop.', 15, 0, '2025-09-23 08:23:05', '2025-09-27 11:01:13'),
+(58, 4, 'Đế tản nhiệt Cooler Master', 'Phụ kiện laptop', 990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.eH3YRkL3KWwn56NxIgvk0QHaG2%3Fpid%3DApi&f=1&ipt=124ede2aa07b43ab4009d7f91e986b82a1b8e1bb94c0c6388617f68eb733a4e9&ipo=images\"]', 'Đế tản nhiệt với quạt lớn, hiệu quả cao.', 18, 1, '2025-09-23 08:23:05', '2025-09-27 11:00:21'),
+(59, 4, 'Ổ cứng di động Samsung T7 1TB', 'Phụ kiện laptop', 3299000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.rCy5jcmdsT_oVzD4UYVyjgHaHa%3Fpid%3DApi&f=1&ipt=7505c27bf062fcd6bc78fcfd776bc6d05327a1254f9c276293891f61a7e8d27a&ipo=images\"]', 'SSD di động tốc độ cao, hỗ trợ USB 3.2.', 12, 1, '2025-09-23 08:23:05', '2025-09-27 11:01:04'),
+(60, 4, 'Hub chuyển đổi Ugreen 7-in-1', 'Phụ kiện laptop', 890000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.jRx4v2RotKMrxSr7hS7EMwHaHa%3Fpid%3DApi&f=1&ipt=1ed5350c25dbf819c1c941a724bcb8a0f7445369c96a9cb700deaa5bab8609a1&ipo=images\"]', 'Hub USB-C đa năng cho Macbook/Laptop.', 30, 1, '2025-09-23 08:23:05', '2025-09-27 11:00:15'),
+(61, 7, 'Sony WH-1000XM5', 'Âm thanh', 9990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.j2XOxqkeFjUMFnCTYe4mcwHaHa%3Fpid%3DApi&f=1&ipt=68b4d06e73a0fbb2a2400d32cd17adeb277c0daea1e4d764b746d9f1ff8662ec&ipo=images\"]', 'Tai nghe chống ồn hàng đầu, pin 30h.', 10, 1, '2025-09-23 08:23:05', '2025-09-27 11:45:57'),
+(62, 7, 'Apple AirPods Pro 2', 'Âm thanh', 6490000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.JfiZrRQPI2uxXG2zi0nRCgHaHa%3Fpid%3DApi&f=1&ipt=49355439940fec624e4de760ed0b2426d1c4d28d6c2f154d8437f44a61b8a67b&ipo=images\"]', 'Tai nghe true wireless cao cấp của Apple.', 25, 1, '2025-09-23 08:23:05', '2025-09-27 11:46:04'),
+(63, 7, 'Loa JBL Charge 5', 'Âm thanh', 3990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.D-JzpkvWrxWEVWIbpm87rAHaHa%3Fpid%3DApi&f=1&ipt=ab27ed66c7b1756581f90cea74be6cefe510159278a3241c21420f3940484649&ipo=images\"]', 'Loa bluetooth chống nước, pin 20h.', 20, 1, '2025-09-23 08:23:05', '2025-09-27 11:46:08'),
+(64, 7, 'Tai nghe Razer BlackShark V2', 'Âm thanh', 2990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.EN4A8WehMYmz5gUd6PX4cAHaE8%3Fpid%3DApi&f=1&ipt=6f1efc2888a6ad19bca6fe75c2a2fbf3983eed6228e6c276cbae406b89f3a721&ipo=images\"]', 'Tai nghe gaming với micro siêu nhạy.', 15, 1, '2025-09-23 08:23:05', '2025-09-27 11:46:12'),
+(65, 2, 'HP Spectre x360 14', 'Laptop', 37990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.JJVbahX59pr0Nxkn9FVHAQHaEK%3Fpid%3DApi&f=1&ipt=aebe704489f5e289da622189e7c7205f633315a24de328f68b4a7df1388e8d04&ipo=images', 'Laptop 2-in-1 cao cấp, màn OLED cảm ứng.', 9, 1, '2025-09-23 08:23:20', '2025-09-27 15:06:38'),
+(66, 2, 'Lenovo ThinkPad X1 Carbon Gen 11', 'Laptop', 42990000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.Ll3WwhJpIkWVRm7i8gSsQQHaFL%3Fpid%3DApi&f=1&ipt=2060f51a5428a15b33bb13725259e9dbf27f716a8e6e77f663048f267211aa47&ipo=images', 'Doanh nhân cao cấp, siêu bền, pin lâu.', 11, 1, '2025-09-23 08:23:20', '2025-09-27 09:22:47'),
+(67, 5, 'iPad Air 5 2022', 'Tablet', 16990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.69etAAeWPk63SwjrMrLmrQHaHa%3Fpid%3DApi&f=1&ipt=dc4d078cbb251001ddb82cc82524e00e4c987d36cfa2cb13c5c05acb18b6c79f&ipo=images\"]', 'Chip M1, hỗ trợ Apple Pencil 2.', 14, 1, '2025-09-23 08:23:20', '2025-09-27 11:00:49'),
+(68, 5, 'Huawei MatePad 11 2023', 'Tablet', 12990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.PrJg6Q8uT1jyT9nwrtMWTgHaHa%3Fpid%3DApi&f=1&ipt=e7a2fffb39f3b1c76a47c6c2e6382887444ee77f3cd415f7bb1a8dc29813f5ae&ipo=images\"]', 'Màn hình 120Hz, hỗ trợ bút M-Pencil.', 16, 1, '2025-09-23 08:23:20', '2025-09-27 10:56:08'),
+(69, 7, 'Loa Bose SoundLink Flex', 'Bose', 4990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.3X3VSYZDGNa4J3KzpNymvwHaFS%3Fpid%3DApi&f=1&ipt=ce6143405cd22dab19accccb42d53fc7c2598082ea1d3197b9ea29716aff08c7&ipo=images\"]', 'Loa nhỏ gọn, âm bass mạnh.', 12, 1, '2025-09-23 08:23:20', '2025-09-27 11:28:04'),
+(70, 7, 'Tai nghe Sennheiser Momentum 4 Wireless', 'Âm thanh', 8990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.9gr1c9BxH8HoNfcQuy0PqgHaF7%3Fpid%3DApi&f=1&ipt=6e0668fd335a731a6ad367f7a146d8a637ca562da34cd1eff9e9275782ec79be&ipo=images\"]', 'Tai nghe chống ồn, pin 60h.', 8, 1, '2025-09-23 08:23:20', '2025-09-27 11:45:34'),
+(71, 3, 'Garmin Forerunner 265', 'Đồng hồ', 8990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.2YbRQHlfzTQbDoIzEJ_CggHaHa%3Fpid%3DApi&f=1&ipt=4f8031f812e60eb5c193e925d718ce340a1f61946229b0970ba20881766f6a28&ipo=images\"]', 'Đồng hồ thể thao GPS chuyên nghiệp.', 10, 1, '2025-09-23 08:23:21', '2025-09-27 11:12:09'),
+(72, 3, 'Amazfit GTR 4', 'Đồng hồ', 4990000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftechcart.com.au%2Fwp-content%2Fuploads%2F2023%2F04%2F73007-Amazfit-GTR-4-Global-A2166-Brown.png&f=1&nofb=1&ipt=fbeb5ad152a37e76d2e14b323460749258e20a9fcf19fb0c6e33de14623bdfd9\"]', 'Pin 14 ngày, theo dõi sức khỏe toàn diện.', 20, 1, '2025-09-23 08:23:21', '2025-09-27 11:12:12'),
+(73, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 1590000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images\"]', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra	\n1 x USB-C 1 x Magsafe, Cổng sạc vào, 1 x USB-C, Lõi pin Li-Polymer, Kích thước 104.3 x 67.8 x 19.2 mm, Trọng lượng 208.8 g', 30, 1, '2025-09-27 13:48:36', '2025-09-27 14:43:20'),
+(74, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:38', '2025-09-27 13:53:12'),
+(75, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:38', '2025-09-27 13:53:13'),
+(76, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:38', '2025-09-27 13:53:14'),
+(77, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:38', '2025-09-27 13:53:14'),
+(78, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:42', '2025-09-27 13:53:12'),
+(79, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:43', '2025-09-27 13:53:08'),
+(80, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:43', '2025-09-27 13:53:09'),
+(81, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:43', '2025-09-27 13:53:09'),
+(82, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:43', '2025-09-27 13:53:10'),
+(83, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:43', '2025-09-27 13:53:11'),
+(84, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:46', '2025-09-27 13:53:07'),
+(85, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:46', '2025-09-27 13:53:08'),
+(86, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:52:52'),
+(87, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:52:52'),
+(88, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:52:53'),
+(89, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:52:54'),
+(90, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:53:06'),
+(91, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:47', '2025-09-27 13:53:07'),
+(92, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:48', '2025-09-27 13:53:06'),
+(93, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:48', '2025-09-27 13:52:39'),
+(94, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:48', '2025-09-27 13:52:42'),
+(95, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:48', '2025-09-27 13:52:44'),
+(96, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe\n\nCổng sạc vào	\n1 x USB-C\n\nTiện ích	\nĐèn LED thông báo thời lượng pin\nSạc cùng lúc nhiều thiết bị\n\nLõi pin	\nLi-Polymer\n\nKích thước	\n104.3 x 67.8 x 19.2 mm\n\nTrọng lượng	\n208.8 g', 30, 0, '2025-09-27 13:48:48', '2025-09-27 13:52:50'),
+(97, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin	\n10000mAh\n\nCông suất sạc	\nCó dây: 20W\nKhông dây: 15W\n\nCổng sạc ra	\n1 x USB-C\n1 x Magsafe', 30, 0, '2025-09-27 13:49:04', '2025-09-27 13:53:05'),
+(98, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:50', '2025-09-27 13:53:05'),
+(99, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:51', '2025-09-27 13:53:02'),
+(100, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:51', '2025-09-27 13:53:03'),
+(101, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:51', '2025-09-27 13:53:03'),
+(102, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:51', '2025-09-27 13:53:04'),
+(103, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:51', '2025-09-27 13:53:04'),
+(104, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:52:59'),
+(105, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:53:00'),
+(106, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:53:01'),
+(107, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:53:01'),
+(108, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:53:01'),
+(109, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:52', '2025-09-27 13:53:02'),
+(110, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:53', '2025-09-27 13:52:57');
+INSERT INTO `product` (`id`, `category_id`, `product_name`, `product_type`, `price`, `thumbnail`, `description`, `stock_quantity`, `is_active`, `created_at`, `updated_at`) VALUES
+(111, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:53', '2025-09-27 13:52:58'),
+(112, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:53', '2025-09-27 13:52:58'),
+(113, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:53', '2025-09-27 13:52:59'),
+(114, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:50:59', '2025-09-27 13:52:56'),
+(115, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 590000.00, 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra, 1 x USB-C, 1 x Magsafe', 30, 0, '2025-09-27 13:51:00', '2025-09-27 13:52:55');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `roles`
+-- Table structure for table `roles`
 --
 
 CREATE TABLE `roles` (
@@ -611,7 +654,7 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `roles`
+-- Dumping data for table `roles`
 --
 
 INSERT INTO `roles` (`id`, `role_name`, `role_type`, `description`, `created_at`) VALUES
@@ -626,7 +669,7 @@ INSERT INTO `roles` (`id`, `role_name`, `role_type`, `description`, `created_at`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `role_permission`
+-- Table structure for table `role_permission`
 --
 
 CREATE TABLE `role_permission` (
@@ -635,7 +678,7 @@ CREATE TABLE `role_permission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `role_permission`
+-- Dumping data for table `role_permission`
 --
 
 INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES
@@ -699,7 +742,7 @@ INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -719,7 +762,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `reset_token`, `address`, `card`, `is_active`, `created_at`, `updated_at`, `reset_token_expiry`, `password_changed`) VALUES
@@ -730,12 +773,13 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `reset_tok
 (8, 'Nguyen Huy Quang', 'huyquang1@gmail.com', '0886922226', '$2y$10$V40V08ea9cKAZNn2/Iemc.p.OldkgAo1Z5bqMPg/7ig22fiiOeQm2', NULL, 'Tan binh ', NULL, 0, '2025-09-13 09:09:16', '2025-09-26 09:41:21', NULL, 0),
 (9, 'Nguyen quangn', 'test3@gmail.com', '0886922226', '$2y$10$tGvoX6thqd2QVCORoKcJE.VOFj5mypMdOjemIc7YwUfqU9m1K9Nmi', NULL, 'Tbinh', NULL, 1, '2025-09-16 16:47:30', '2025-09-16 16:47:30', NULL, 0),
 (10, 'Quang Huy Nguyennnnnn', 'test5@gmail.com', '0886924681', '$2y$10$HKSE45ynh5nKpuXbmqI.geg0xbDftMk3on7DYSXEwbyWVgJs7AERS', NULL, 'Vinh,Nghe Annnnnn', NULL, 1, '2025-09-20 14:57:24', '2025-09-20 14:57:24', NULL, 0),
-(11, 'Quang Huy Nguyen', 'hquang6504@gmail.com', '0886924681', '$2y$10$Ho47VGBZViREKUhA.tjRHuR0nKwyANfkb5J/rmCcgQ/Ditvuu1hXi', NULL, 'Vinh,Nghe An', NULL, 1, '2025-09-25 15:52:20', '2025-09-26 10:22:05', NULL, 0);
+(11, 'Quang Huy Nguyen', 'hquang6504@gmail.com', '0886924681', '$2y$10$Ho47VGBZViREKUhA.tjRHuR0nKwyANfkb5J/rmCcgQ/Ditvuu1hXi', NULL, 'Vinh,Nghe An', NULL, 1, '2025-09-25 15:52:20', '2025-09-26 10:22:05', NULL, 0),
+(12, 'Long Ho', 'thanhlong@gmail.com', '0987654321', '$2y$10$bDeuYL.BdB4XAZZ2FTZtAOBMV4ExvEzH64hQPIaCf2V6iVDGeHUH2', NULL, 'DAKLAK', 'non', 1, '2025-09-27 08:24:40', '2025-09-27 08:30:27', NULL, 0);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `user_role`
+-- Table structure for table `user_role`
 --
 
 CREATE TABLE `user_role` (
@@ -744,7 +788,7 @@ CREATE TABLE `user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `user_role`
+-- Dumping data for table `user_role`
 --
 
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
@@ -755,27 +799,28 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
 (8, 2),
 (9, 2),
 (10, 2),
-(11, 2);
+(11, 2),
+(12, 3);
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `advertisement`
+-- Indexes for table `advertisement`
 --
 ALTER TABLE `advertisement`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `cart`
+-- Indexes for table `cart`
 --
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Chỉ mục cho bảng `cart_items`
+-- Indexes for table `cart_items`
 --
 ALTER TABLE `cart_items`
   ADD PRIMARY KEY (`id`),
@@ -783,26 +828,26 @@ ALTER TABLE `cart_items`
   ADD KEY `product_id` (`product_id`);
 
 --
--- Chỉ mục cho bảng `category`
+-- Indexes for table `category`
 --
 ALTER TABLE `category`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `dim_date`
+-- Indexes for table `dim_date`
 --
 ALTER TABLE `dim_date`
   ADD PRIMARY KEY (`date_id`);
 
 --
--- Chỉ mục cho bảng `dim_product`
+-- Indexes for table `dim_product`
 --
 ALTER TABLE `dim_product`
   ADD PRIMARY KEY (`product_id`),
   ADD KEY `category_id` (`category_id`);
 
 --
--- Chỉ mục cho bảng `fact_sales`
+-- Indexes for table `fact_sales`
 --
 ALTER TABLE `fact_sales`
   ADD PRIMARY KEY (`id`),
@@ -811,21 +856,21 @@ ALTER TABLE `fact_sales`
   ADD KEY `date_id` (`date_id`);
 
 --
--- Chỉ mục cho bảng `login_attempts`
+-- Indexes for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Chỉ mục cho bảng `orders`
+-- Indexes for table `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Chỉ mục cho bảng `order_details`
+-- Indexes for table `order_details`
 --
 ALTER TABLE `order_details`
   ADD PRIMARY KEY (`id`),
@@ -833,161 +878,161 @@ ALTER TABLE `order_details`
   ADD KEY `product_id` (`product_id`);
 
 --
--- Chỉ mục cho bảng `payments`
+-- Indexes for table `payments`
 --
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `order_id` (`order_id`);
 
 --
--- Chỉ mục cho bảng `permission`
+-- Indexes for table `permission`
 --
 ALTER TABLE `permission`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `permission_name` (`permission_name`);
 
 --
--- Chỉ mục cho bảng `product`
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
   ADD KEY `category_id` (`category_id`);
 
 --
--- Chỉ mục cho bảng `roles`
+-- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `role_permission`
+-- Indexes for table `role_permission`
 --
 ALTER TABLE `role_permission`
   ADD PRIMARY KEY (`role_id`,`permission_id`),
   ADD KEY `permission_id` (`permission_id`);
 
 --
--- Chỉ mục cho bảng `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Chỉ mục cho bảng `user_role`
+-- Indexes for table `user_role`
 --
 ALTER TABLE `user_role`
   ADD PRIMARY KEY (`user_id`,`role_id`),
   ADD KEY `role_id` (`role_id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `advertisement`
+-- AUTO_INCREMENT for table `advertisement`
 --
 ALTER TABLE `advertisement`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `cart`
+-- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `cart_items`
+-- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
--- AUTO_INCREMENT cho bảng `category`
+-- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT cho bảng `fact_sales`
+-- AUTO_INCREMENT for table `fact_sales`
 --
 ALTER TABLE `fact_sales`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `login_attempts`
+-- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT cho bảng `orders`
+-- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=190;
 
 --
--- AUTO_INCREMENT cho bảng `order_details`
+-- AUTO_INCREMENT for table `order_details`
 --
 ALTER TABLE `order_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 
 --
--- AUTO_INCREMENT cho bảng `payments`
+-- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
--- AUTO_INCREMENT cho bảng `permission`
+-- AUTO_INCREMENT for table `permission`
 --
 ALTER TABLE `permission`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- AUTO_INCREMENT cho bảng `product`
+-- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 
 --
--- AUTO_INCREMENT cho bảng `roles`
+-- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT cho bảng `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `cart`
+-- Constraints for table `cart`
 --
 ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
--- Các ràng buộc cho bảng `cart_items`
+-- Constraints for table `cart_items`
 --
 ALTER TABLE `cart_items`
   ADD CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `cart` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
 
 --
--- Các ràng buộc cho bảng `dim_product`
+-- Constraints for table `dim_product`
 --
 ALTER TABLE `dim_product`
   ADD CONSTRAINT `dim_product_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
   ADD CONSTRAINT `dim_product_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`);
 
 --
--- Các ràng buộc cho bảng `fact_sales`
+-- Constraints for table `fact_sales`
 --
 ALTER TABLE `fact_sales`
   ADD CONSTRAINT `fact_sales_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
@@ -995,45 +1040,45 @@ ALTER TABLE `fact_sales`
   ADD CONSTRAINT `fact_sales_ibfk_3` FOREIGN KEY (`date_id`) REFERENCES `dim_date` (`date_id`);
 
 --
--- Các ràng buộc cho bảng `login_attempts`
+-- Constraints for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
   ADD CONSTRAINT `login_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `orders`
+-- Constraints for table `orders`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
--- Các ràng buộc cho bảng `order_details`
+-- Constraints for table `order_details`
 --
 ALTER TABLE `order_details`
   ADD CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
 
 --
--- Các ràng buộc cho bảng `payments`
+-- Constraints for table `payments`
 --
 ALTER TABLE `payments`
   ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `product`
+-- Constraints for table `product`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`);
 
 --
--- Các ràng buộc cho bảng `role_permission`
+-- Constraints for table `role_permission`
 --
 ALTER TABLE `role_permission`
   ADD CONSTRAINT `role_permission_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `role_permission_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `user_role`
+-- Constraints for table `user_role`
 --
 ALTER TABLE `user_role`
   ADD CONSTRAINT `user_role_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
