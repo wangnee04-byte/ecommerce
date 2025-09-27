@@ -154,6 +154,10 @@ async function loadCart() {
     const parsed = await safeParseResponse(res);
     const data = parsed.json || {};
 
+    // ✅ Debug logging
+    console.log("Cart API response:", data);
+    console.log("Items:", data.data?.items);
+
     const grid = document.getElementById("cartGrid");
     const summary = document.getElementById("cartTotal");
     const payBtn = document.getElementById("payBtn");
@@ -167,40 +171,50 @@ async function loadCart() {
 
     grid.innerHTML = "";
     data.data.items.forEach(item => {
+      // ✅ Debug từng item
+      console.log("Processing item:", item);
+      console.log("Thumbnail:", item.thumbnail);
+      console.log("Product ID:", item.product_id || item.id);
+
       const card = document.createElement("div");
       card.className = "accessory-card";
 
-      // ==== render ảnh với router backend ====
+      // ==== render ảnh với router backend - giống logic index.html ====
       let thumb = Array.isArray(item.thumbnail) ? item.thumbnail[0] : item.thumbnail;
       const pid = item.product_id || item.id;
 
+      // Accept absolute URLs directly
       let imgUrl = "";
       if (thumb) {
         if (/^https?:\/\//i.test(thumb)) {
-          imgUrl = thumb; // absolute URL
-        } else if (thumb.startsWith("/")) {
-          imgUrl = `http://localhost/ecommerce_api${thumb}`; // relative
+          // Already full URL from API
+          imgUrl = thumb;
+        } else if (thumb.startsWith("/api/")) {
+          // Relative API path
+          imgUrl = `http://localhost/ecommerce_api/index.php${thumb}`;
         } else {
-          // ✅ API serve ảnh sản phẩm
-          imgUrl = `http://localhost/ecommerce_api/api/images/products/${pid}/${thumb}`;
+          // Filename only - use API route
+          imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
         }
       } else {
         imgUrl = "logo.png"; // fallback placeholder
       }
 
+      console.log("Final image URL:", imgUrl);
+
+      // ✅ Tạo img element riêng để xử lý lỗi tốt hơn
       const img = document.createElement("img");
       img.src = imgUrl;
       img.onerror = () => { 
-        console.error("Ảnh lỗi:", imgUrl);
+        console.error("Ảnh lỗi:", imgUrl, "cho sản phẩm:", item.product_name);
         img.onerror = null; 
         img.src = "logo.png"; 
       };
       img.alt = item.product_name || "";
       img.style.width = "150px";
-      card.appendChild(img);
-      // ==== hết phần ảnh ====
-
-      card.innerHTML += `
+      
+      // Tạo phần còn lại của card
+      card.innerHTML = `
         <h3>${item.product_name}</h3>
         <p class="price">${formatCurrency(item.price)}</p>
         <div class="qty-box">
@@ -214,6 +228,9 @@ async function loadCart() {
           <button class="btn btn-outline" data-id="${item.id}">Xóa</button>
         </div>
       `;
+      
+      // Thêm img vào đầu card
+      card.insertBefore(img, card.firstChild);
 
       grid.appendChild(card);
     });
