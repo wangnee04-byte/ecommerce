@@ -26,6 +26,15 @@
       <script>
         const API_BASE = "http://localhost/ecommerce_api/index.php/api";
       
+        // ✅ Tạo placeholder image SVG thống nhất
+        function createPlaceholderImage(width = 150, height = 150, text = "No Image") {
+          const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+            <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="#6c757d">${text}</text>
+          </svg>`;
+          return `data:image/svg+xml;base64,${btoa(svg)}`;
+        }
+      
         // Xử lý form search
         document.addEventListener("DOMContentLoaded", () => {
           const searchForm = document.querySelector(".search-box");
@@ -394,12 +403,15 @@ document.addEventListener("DOMContentLoaded", () => {
             imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
           }
         } else {
-          imgUrl = "logo.png"; // fallback placeholder
+          imgUrl = ""; // No hardcode fallback
         }
 
         const img = document.createElement("img");
-        img.src = imgUrl;
-        img.onerror = () => { img.onerror = null; img.src = "logo.png"; };
+        img.src = imgUrl || createPlaceholderImage();
+        img.onerror = () => { 
+          img.onerror = null; 
+          img.src = createPlaceholderImage(); 
+        };
         img.alt = prod.product_name || "";
         img.style.width = "150px";
         card.appendChild(img);

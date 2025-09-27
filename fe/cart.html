@@ -126,6 +126,15 @@ document.addEventListener("DOMContentLoaded", () => {
 // cart.js
 const API_BASE = "http://localhost/ecommerce_api/index.php/api";
 
+// ✅ Tạo placeholder image SVG thống nhất
+function createPlaceholderImage(width = 150, height = 150, text = "No Image") {
+  const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+    <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="#6c757d">${text}</text>
+  </svg>`;
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
 function formatCurrency(amount) {
   const n = Number(amount) || 0;
   return n.toLocaleString("vi-VN") + "₫";
@@ -197,18 +206,18 @@ async function loadCart() {
           imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
         }
       } else {
-        imgUrl = "logo.png"; // fallback placeholder
+        imgUrl = ""; // No fallback - let frontend handle
       }
 
       console.log("Final image URL:", imgUrl);
 
       // ✅ Tạo img element riêng để xử lý lỗi tốt hơn
       const img = document.createElement("img");
-      img.src = imgUrl;
+      img.src = imgUrl || createPlaceholderImage();
       img.onerror = () => { 
         console.error("Ảnh lỗi:", imgUrl, "cho sản phẩm:", item.product_name);
         img.onerror = null; 
-        img.src = "logo.png"; 
+        img.src = createPlaceholderImage();
       };
       img.alt = item.product_name || "";
       img.style.width = "150px";

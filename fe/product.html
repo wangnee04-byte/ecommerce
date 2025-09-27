@@ -219,6 +219,15 @@
   </div>
 
   <script>
+    // ✅ Tạo placeholder image SVG thống nhất
+    function createPlaceholderImage(width = 300, height = 300, text = "No Image") {
+      const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+        <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="16" fill="#6c757d">${text}</text>
+      </svg>`;
+      return `data:image/svg+xml;base64,${btoa(svg)}`;
+    }
+
     async function loadProduct() {
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("id");
@@ -250,10 +259,7 @@
 
     // ===== Helpers for thumbnails & fallback images =====
     function getDefaultImagePath(){
-      // Dùng URL tuyệt đối; nếu đang mở file:// thì fallback sang http://localhost
-      const origin = window.location.origin || '';
-      const base = /^https?:/i.test(origin) ? origin : 'http://localhost';
-      return base + '/ecommerce_api/public/img/samsung-galaxy-23-ultra-tim.jpg.webp';
+      return createPlaceholderImage();
     }
     function normalizeThumbList(raw){
       if(!raw) return [];

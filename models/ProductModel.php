@@ -191,8 +191,9 @@ class ProductModel {
 
     
     private function getDefaultImage() {
-        $base_url = $this->getBaseUrl();
-        return "{$base_url}/index.php/api/images/products/default/default-product.jpg";
+        // Trả về empty string thay vì hardcode path
+        // Frontend sẽ xử lý fallback image
+        return '';
     }
     
     public function updateProductThumbnail($product_id, $image_paths) {
