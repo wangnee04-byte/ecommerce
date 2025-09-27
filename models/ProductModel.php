@@ -539,34 +539,65 @@ class ProductModel {
         
         return $stmt->execute();
     }
-    public function searchProducts($keyword, $limit = 20) {
+    public function searchProducts($keyword, $limit = 20)
+    {
         try {
-            $sql = "SELECT p.*, c.product_type as category_name
-                    FROM Product p
-                    LEFT JOIN Category c ON p.category_id = c.id
-                    WHERE p.is_active = TRUE
-                    AND (p.product_name LIKE :kw OR p.description LIKE :kw)
-                    ORDER BY p.created_at DESC
-                    LIMIT :limit";
+            // Tách keyword thành nhiều từ
+            $keywords = preg_split('/\s+/', trim($keyword));
+            if (!$keywords || count($keywords) === 0) {
+                return [];
+            }
 
-            $stmt = $this->db->prepare($sql); // ✅ đổi từ $this->conn thành $this->db
-            $kw = "%" . $keyword . "%";
-            $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
-            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+            $conditions = [];
+            $params = [];
+
+            // Với mỗi từ khoá, tạo điều kiện LIKE
+            foreach ($keywords as $i => $word) {
+                $param = ":kw$i";
+                $conditions[] = "(p.product_name LIKE $param 
+                                OR p.description LIKE $param 
+                                OR p.brand LIKE $param 
+                                OR c.product_type LIKE $param)";
+                $params[$param] = "%" . $word . "%";
+            }
+
+            // Ghép các điều kiện bằng AND (tất cả từ phải match)
+            $whereClause = implode(" AND ", $conditions);
+
+            $sql = "
+                SELECT p.*, c.product_type as category_name
+                FROM Product p
+                LEFT JOIN Category c ON p.category_id = c.id
+                WHERE p.is_active = TRUE
+                AND $whereClause
+                LIMIT :limit
+            ";
+
+            $stmt = $this->db->prepare($sql);
+
+            // Bind các param keyword
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value, PDO::PARAM_STR);
+            }
+
+            // Bind limit
+            $stmt->bindValue(":limit", (int) $limit, PDO::PARAM_INT);
+
             $stmt->execute();
-
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // xử lý thumbnail cho kết quả tìm kiếm
+            // ✅ Xử lý thumbnail bằng function có sẵn
             foreach ($products as &$product) {
                 $product['thumbnail'] = $this->processThumbnail($product['thumbnail'], $product['id'] ?? null);
             }
 
             return $products;
         } catch (PDOException $e) {
+            error_log("Search products failed: " . $e->getMessage());
             return [];
         }
     }
+
 
     public function getRecommendedProducts($excludeId = null, $limit = 8) {
         try {
