@@ -384,13 +384,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let imgUrl = "";
         if (thumb) {
           if (/^https?:\/\//i.test(thumb)) {
+            // Already full URL from API
             imgUrl = thumb;
-          } else if (thumb.startsWith("/")) {
-            // Relative to backend root
-            imgUrl = `http://localhost/ecommerce_api${thumb}`;
+          } else if (thumb.startsWith("/api/")) {
+            // Relative API path
+            imgUrl = `http://localhost/ecommerce_api/index.php${thumb}`;
           } else {
-            // Treat as filename inside products/{pid}
-            imgUrl = `http://localhost/ecommerce_api/public/images/products/${pid}/${thumb}`;
+            // Filename only - use API route
+            imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
           }
         } else {
           imgUrl = "logo.png"; // fallback placeholder
@@ -487,11 +488,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // Render nhiều category
       fetchProducts(1, "phone-grid", 6);       // Điện thoại
       fetchProducts(2, "laptop-grid", 6);      // Laptop
-      fetchProducts(3, "tablet-grid", 6);      // Tablet
-      fetchProducts(4, "phone-accessory-grid", 6); // Phụ kiện điện thoại
-      fetchProducts(5, "laptop-accessory-grid", 6); // Phụ kiện laptop
-      fetchProducts(6, "audio-grid", 6);       // Âm thanh
-      fetchProducts(7, "watch-grid", 6);       // Đồng hồ
+      fetchProducts(3, "watch-grid", 6);       // Đồng hồ
+      fetchProducts(4, "laptop-accessory-grid", 6); // Phụ kiện laptop
+      fetchProducts(5, "tablet-grid", 6);      // Tablet
+      fetchProducts(6, "phone-accessory-grid", 6); // Phụ kiện điện thoại   
+      fetchProducts(7, "audio-grid", 6);       // Âm thanh
+
     
       // Load giỏ hàng nếu có
       if (typeof loadCart === 'function') {

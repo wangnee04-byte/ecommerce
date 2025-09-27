@@ -6,6 +6,77 @@
   <title>Chi tiết sản phẩm - Tech Mall</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .pd-specs {
+      margin-top: 30px;
+      background: rgba(40, 44, 52, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    .panel-head {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #ffd700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ffd700;
+    }
+    
+    .pd-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px 30px;
+    }
+    
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #ffd700;
+      transition: all 0.3s ease;
+    }
+    
+    .spec-row:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+    
+    .spec-label {
+      font-weight: 500;
+      color: #e0e6ed;
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .spec-value {
+      font-weight: 600;
+      color: #fff;
+      text-align: right;
+      flex: 1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .pd-specs-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .spec-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .spec-value {
+        text-align: left;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Top Notification -->
@@ -159,7 +230,7 @@
       wrap.className = 'recom-section';
       wrap.innerHTML = `
         <div class="recom-head">
-          <h3>Sản phẩm thường mua cùng</h3>
+          <h3>Có thể bạn cũng thích</h3>
           <a href="showproduct1.html">Xem tất cả</a>
         </div>
         <div class="recom-wrap">
@@ -203,11 +274,48 @@
  function renderProductDetail(prod) {
   const container = document.getElementById("product-detail");
 
-  // Tách mô tả thành các cặp key:value theo dấu phẩy
-  const descriptionPairs = (prod.description || "")
-    .split(",")
-    .map(item => item.trim())
-    .filter(item => item.length > 0);
+  // Tách mô tả thành các cặp key:value theo dấu phẩy và dấu hai chấm
+  function parseDescription(description) {
+    if (!description) return [];
+    
+    // Tách theo dấu phẩy trước
+    const items = description.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    const pairs = [];
+    
+    items.forEach((item, index) => {
+      let key = '', value = '';
+      
+      if (item.includes(':')) {
+        // Có dấu hai chấm - tách theo dấu hai chấm
+        const colonIndex = item.indexOf(':');
+        key = item.substring(0, colonIndex).trim();
+        value = item.substring(colonIndex + 1).trim();
+      } else {
+        // Không có dấu hai chấm - thử tách theo pattern số + đơn vị
+        const match = item.match(/^(.+?)(\d+[\d\s]*(?:[a-zA-Z]+|₫|%|mAh|W|GB|TB|MP|inch|mm|g|kg).*?)$/i);
+        if (match) {
+          key = match[1].trim();
+          value = match[2].trim();
+        } else {
+          // Nếu không match được gì, dùng làm key với value trống
+          key = item;
+          value = '-';
+        }
+      }
+      
+      // Làm sạch key và value
+      key = key.replace(/^[-:\s]+|[-:\s]+$/g, '').trim();
+      value = value.replace(/^[-:\s]+|[-:\s]+$/g, '').trim();
+      
+      if (key) {
+        pairs.push({ key, value: value || '-' });
+      }
+    });
+    
+    return pairs;
+  }
+
+  const descriptionPairs = parseDescription(prod.description);
 
   const thumbs = normalizeThumbList(prod.thumbnail);
   const mainImg = thumbs[0] || getDefaultImagePath();
@@ -241,23 +349,14 @@
 
     <div class="pd-specs">
       <div class="panel-head">Thông tin chi tiết về Sản phẩm</div>
-      <table class="pd-specs-table">
-        ${descriptionPairs.map((pair, index) => {
-          let [label, ...rest] = pair.split(":");
-          let value = rest.join(":").trim();
-          if (!value) {
-            const match = pair.match(/^(.*?)(\d[\d., ]*[a-zA-Z%₫]*)$/);
-            if (match) { label = match[1].trim(); value = match[2].trim(); }
-            else { label = pair; value = "-"; }
-          }
-          return `
-            <tr>
-              <td>${label ? label.trim() : `Thông số ${index + 1}`}</td>
-              <td>${value || '-'}</td>
-            </tr>
-          `;
-        }).join("")}
-      </table>
+      <div class="pd-specs-grid">
+        ${descriptionPairs.map((pair) => `
+          <div class="spec-row">
+            <div class="spec-label">${pair.key}</div>
+            <div class="spec-value">${pair.value}</div>
+          </div>
+        `).join('')}
+      </div>
     </div>
   `;
 }

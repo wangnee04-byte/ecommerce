@@ -82,7 +82,7 @@ function showMessage(msg, isError=false){
   setTimeout(()=>div.remove(), 2800);
 }
 
-// Build categories from products (distinct)
+// Load categories from Categories API
 async function loadCategories(){
   const sel = document.getElementById('selCategory');
   const selForm = document.getElementById('prdCategory');
@@ -90,31 +90,53 @@ async function loadCategories(){
   selForm.innerHTML = '<option value="">Chọn danh mục</option>';
   
   try{
-    const qs = new URLSearchParams({limit:'100', page:'1'});
-    const res = await fetch(API_BASE + '/products?' + qs.toString());
+    // Gọi API categories trực tiếp
+    const res = await fetch(API_BASE + '/categories');
     const status = res.status; 
     const ctype = res.headers.get('content-type')||'';
     const txtRaw = await res.text(); 
     const txt = (txtRaw||'').replace(/^\uFEFF/, '').trim();
     let data; 
-    try{ data = JSON.parse(txt);}catch{ data = null; }
     
-    if(!data || !data.success){ 
-      console.warn('Categories from products failed:', {status, ctype, body: txt}); 
+    try{ 
+      data = JSON.parse(txt);
+    }catch{ 
+      console.warn('Categories API non-JSON:', {status, ctype, body: txt});
       return; 
     }
     
-    const seen = new Map();
-    (data.data||[]).forEach(p=>{ 
-      const id=p.category_id||p.categoryId; 
-      const name=p.category_name||p.categoryName; 
-      if(id && name && !seen.has(id)) seen.set(id, name);
+    if(!data || !data.success){ 
+      console.warn('Categories API failed:', {status, ctype, body: txt}); 
+      return; 
+    }
+    
+    // Sắp xếp categories theo tên
+    const categories = (data.data || []).sort((a, b) => {
+      const nameA = a.product_type || a.name || '';
+      const nameB = b.product_type || b.name || '';
+      return nameA.localeCompare(nameB);
     });
     
-    [...seen.entries()].sort((a,b)=>String(a[1]).localeCompare(String(b[1]))).forEach(([id,name])=>{
-      const o1=document.createElement('option'); o1.value=id; o1.textContent=name; sel.appendChild(o1);
-      const o2=document.createElement('option'); o2.value=id; o2.textContent=name; selForm.appendChild(o2);
+    // Thêm options vào dropdown
+    categories.forEach(category => {
+      const id = category.id;
+      const name = category.product_type || category.name || `Category ${id}`;
+      
+      // Dropdown cho filter
+      const o1 = document.createElement('option'); 
+      o1.value = id; 
+      o1.textContent = name; 
+      sel.appendChild(o1);
+      
+      // Dropdown cho form thêm/sửa
+      const o2 = document.createElement('option'); 
+      o2.value = id; 
+      o2.textContent = name; 
+      selForm.appendChild(o2);
     });
+    
+    console.log('Categories loaded:', categories.length);
+    
   }catch(err){ 
     console.warn('loadCategories error:', err); 
   }
@@ -319,8 +341,12 @@ function initEventHandlers() {
       
       try{ 
         data = JSON.parse(txt);
-      }catch{ 
-        showMessage('Lỗi phản hồi từ server', true); 
+      }catch(parseErr){ 
+        console.error('JSON Parse Error:', parseErr);
+        console.error('Response Status:', res.status);
+        console.error('Response Headers:', res.headers.get('content-type'));
+        console.error('Raw Response:', txt.slice(0, 500)); // First 500 chars
+        showMessage(`Lỗi phản hồi từ server (${res.status}). Xem Console để debug.`, true); 
         return; 
       }
       
