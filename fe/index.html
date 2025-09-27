@@ -30,45 +30,60 @@
         document.addEventListener("DOMContentLoaded", () => {
           const searchForm = document.querySelector(".search-box");
           const searchInput = searchForm.querySelector("input[name='q']");
-      
+          const defaultSections = document.getElementById("default-sections");
+          const searchResults = document.getElementById("search-results-section");
+
           searchForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const keyword = searchInput.value.trim();
-            if (!keyword) return;
-      
+
+            if (!keyword) {
+              // Khôi phục layout gốc khi ô trống
+              defaultSections.style.display = "block";
+              searchResults.style.display = "none";
+              searchResults.innerHTML = "";
+              return;
+            }
+
             try {
               const res = await fetch(`${API_BASE}/products/search?q=${encodeURIComponent(keyword)}`);
               const data = await res.json();
-      
-              // Xóa grid cũ
-              const grids = document.querySelectorAll(".product-grid");
-              grids.forEach(grid => grid.innerHTML = "");
-      
+
+              // Ẩn sections mặc định
+              defaultSections.style.display = "none";
+              searchResults.style.display = "block";
+
               if (data.success && data.data.length > 0) {
                 renderSearchResults(data.data);
               } else {
-                const firstSection = document.querySelector(".section");
-                if (firstSection) {
-                  firstSection.innerHTML = `<p style="padding:20px; color:#666;">Không tìm thấy sản phẩm nào cho từ khóa "<strong>${keyword}</strong>"</p>`;
-                }
+                searchResults.innerHTML = `
+                  <div class="container section-head">
+                    <h2>Kết quả tìm kiếm</h2>
+                  </div>
+                  <p style="padding:20px; color:#666;">Không tìm thấy sản phẩm nào cho từ khóa "<strong>${keyword}</strong>"</p>
+                `;
               }
             } catch (err) {
               console.error("Search error:", err);
               alert("Lỗi khi tìm kiếm sản phẩm!");
             }
           });
+
+          // Khôi phục giao diện nếu người dùng xóa từ khóa
+          searchInput.addEventListener("input", () => {
+            if (!searchInput.value.trim()) {
+              defaultSections.style.display = "block";
+              searchResults.style.display = "none";
+              searchResults.innerHTML = "";
+            }
+          });
         });
+
       
         // Hàm render kết quả search (dùng lại template card giống fetchProducts)
         function renderSearchResults(products) {
-        let section = document.querySelector("#search-results-section");
-        if (!section) {
-          section = document.createElement("section");
-          section.className = "section";
-          section.id = "search-results-section";
-          document.querySelector(".hero").insertAdjacentElement("afterend", section);
-        }
-      
+        const section = document.getElementById("search-results-section");
+
         section.innerHTML = `
           <div class="container section-head">
             <h2>Kết quả tìm kiếm</h2>
@@ -88,13 +103,10 @@
           </div>
           <div id="search-grid" class="container product-grid"></div>
         `;
-      
+
         const filterSelect = section.querySelector("#categoryFilter");
-      
-        // Hiển thị tất cả ban đầu
         renderProducts(products, "search-grid");
-      
-        // Khi chọn filter category
+
         filterSelect.addEventListener("change", () => {
           const cat = filterSelect.value;
           if (!cat) {
@@ -204,149 +216,151 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="container cat-inner">
         <a href="showproduct1.html">Điện thoại</a>
         <a href="showproduct2.html">Laptop</a>
-        <a href="showproduct3.html">Đồng hồ</a>
+        <a href="showproduct3.html">Tablet</a>
         <a href="showproduct4.html">Phụ kiện</a>
 
       </div>
     </div>
   </header>
-
-  <!-- Hero / Banner -->
-  <section class="hero">
-    <div class="container hero-grid">
-      <a class="hero-main" href="#">
-        <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop" alt="Banner điện thoại nổi bật">
-        <div class="hero-caption">
-          <h2>Super Sale Tháng 8</h2>
-          <p>Giảm đến 6 triệu cho iPhone, Galaxy, Pixel</p>
-          <span class="btn">Mua ngay</span>
-        </div>
-      </a>
-      <a class="hero-side" href="#">
-        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" alt="Khuyến mãi laptop">
-        <div class="tile-caption">Laptop Học tập & Văn phòng</div>
-      </a>
-      <a class="hero-side" href="#">
-        <img src="https://images.unsplash.com/photo-1675317132583-75301c0d0287?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Khuyến mãi phụ kiện">
-        <div class="tile-caption">Phụ kiện đồng giá 99k</div>
-      </a>
-    </div>
-  </section>
-
-  <!-- Promo Strips -->
-  <section class="promo">
-    <div class="container promo-grid">
-      <a class="promo-card" href="#">
-        <div class="promo-emoji">💳</div>
-        <div class="promo-text">
-          <h3>Miễn phí giao hàng</h3>
-          <p>Giao hàng nhanh chóng</p>
-        </div>
-      </a>
-      <a class="promo-card" href="#">
-        <div class="promo-emoji">🚚</div>
-        <div class="promo-text">
-          <h3>Giao nhanh 2h</h3>
-          <p>Nội thành nhiều tỉnh thành</p>
-        </div>
-      </a>
-      <a class="promo-card" href="#">
-        <div class="promo-emoji">🔄</div>
-        <div class="promo-text">
-          <h3>Đổi trả 30 ngày</h3>
-          <p>An tâm mua sắm</p>
-        </div>
-      </a>
-      <a class="promo-card" href="#">
-        <div class="promo-emoji">🎁</div>
-        <div class="promo-text">
-          <h3>Quà tặng hấp dẫn</h3>
-          <p>Tổng quà đến 2 triệu</p>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- Product Section: Phones -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Điện thoại nổi bật</h2>
-      <div class="tabs">
-        <a href="#" class="tab active">Tất cả</a>
-        <a href="#" class="tab">iPhone</a>
-        <a href="#" class="tab">Samsung</a>
-        <a href="#" class="tab">Xiaomi</a>
-        <a href="#" class="tab">Realme</a>
+  <div id="default-sections">
+    <!-- Hero / Banner -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <a class="hero-main" href="#">
+          <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop" alt="Banner điện thoại nổi bật">
+          <div class="hero-caption">
+            <h2>Super Sale Tháng 8</h2>
+            <p>Giảm đến 6 triệu cho iPhone, Galaxy, Pixel</p>
+            <span class="btn">Mua ngay</span>
+          </div>
+        </a>
+        <a class="hero-side" href="#">
+          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop" alt="Khuyến mãi laptop">
+          <div class="tile-caption">Laptop Học tập & Văn phòng</div>
+        </a>
+        <a class="hero-side" href="#">
+          <img src="https://images.unsplash.com/photo-1675317132583-75301c0d0287?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Khuyến mãi phụ kiện">
+          <div class="tile-caption">Phụ kiện đồng giá 99k</div>
+        </a>
       </div>
-    </div>
-    
+    </section>
 
-   <!-- Product Section: Điện thoại -->
-   <section class="section">
-    <div class="container section-head">
-      <h2>Điện thoại khuyến mãi</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="phone-grid" class="container product-grid">
-      <!-- Sản phẩm điện thoại sẽ render từ JS -->
-    </div>
-  </section>
-  
-  <!-- Product Section: Laptops -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Laptop khuyến mãi</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="laptop-grid" class="container product-grid">
-      <!-- Sản phẩm laptop sẽ render từ JS -->
-    </div>
-  </section>
-  
-  <!-- Product Section: Tablet -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Tablet khuyến mãi</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="tablet-grid" class="container product-grid"></div>
-  </section>
-  
-  <!-- Product Section: Phụ kiện điện thoại -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Phụ kiện điện thoại</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="phone-accessory-grid" class="container product-grid"></div>
-  </section>
-  
-  <!-- Product Section: Phụ kiện laptop -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Phụ kiện laptop</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="laptop-accessory-grid" class="container product-grid"></div>
-  </section>
-  
-  <!-- Product Section: Âm thanh -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Âm thanh</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="audio-grid" class="container product-grid"></div>
-  </section>
-  
-  <!-- Product Section: Đồng hồ -->
-  <section class="section">
-    <div class="container section-head">
-      <h2>Đồng hồ thông minh</h2>
-      <a class="view-all" href="#">Xem tất cả →</a>
-    </div>
-    <div id="watch-grid" class="container product-grid"></div>
-  </section>
+    <!-- Promo Strips -->
+    <section class="promo">
+      <div class="container promo-grid">
+        <a class="promo-card" href="#">
+          <div class="promo-emoji">💳</div>
+          <div class="promo-text">
+            <h3>Miễn phí giao hàng</h3>
+            <p>Giao hàng nhanh chóng</p>
+          </div>
+        </a>
+        <a class="promo-card" href="#">
+          <div class="promo-emoji">🚚</div>
+          <div class="promo-text">
+            <h3>Giao nhanh 2h</h3>
+            <p>Nội thành nhiều tỉnh thành</p>
+          </div>
+        </a>
+        <a class="promo-card" href="#">
+          <div class="promo-emoji">🔄</div>
+          <div class="promo-text">
+            <h3>Đổi trả 30 ngày</h3>
+            <p>An tâm mua sắm</p>
+          </div>
+        </a>
+        <a class="promo-card" href="#">
+          <div class="promo-emoji">🎁</div>
+          <div class="promo-text">
+            <h3>Quà tặng hấp dẫn</h3>
+            <p>Tổng quà đến 2 triệu</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Product Section: Phones -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Điện thoại nổi bật</h2>
+        <div class="tabs">
+          <a href="#" class="tab active">Tất cả</a>
+          <a href="#" class="tab">iPhone</a>
+          <a href="#" class="tab">Samsung</a>
+          <a href="#" class="tab">Xiaomi</a>
+          <a href="#" class="tab">Realme</a>
+        </div>
+      </div>
+    </section>  
+
+    <!-- Product Section: Điện thoại -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Điện thoại khuyến mãi</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="phone-grid" class="container product-grid">
+        <!-- Sản phẩm điện thoại sẽ render từ JS -->
+      </div>
+    </section>
+    
+    <!-- Product Section: Laptops -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Laptop khuyến mãi</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="laptop-grid" class="container product-grid">
+        <!-- Sản phẩm laptop sẽ render từ JS -->
+      </div>
+    </section>
+    
+    <!-- Product Section: Tablet -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Tablet khuyến mãi</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="tablet-grid" class="container product-grid"></div>
+    </section>
+    
+    <!-- Product Section: Phụ kiện điện thoại -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Phụ kiện điện thoại</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="phone-accessory-grid" class="container product-grid"></div>
+    </section>
+    
+    <!-- Product Section: Phụ kiện laptop -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Phụ kiện laptop</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="laptop-accessory-grid" class="container product-grid"></div>
+    </section>
+    
+    <!-- Product Section: Âm thanh -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Âm thanh</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="audio-grid" class="container product-grid"></div>
+    </section>
+    
+    <!-- Product Section: Đồng hồ -->
+    <section class="section">
+      <div class="container section-head">
+        <h2>Đồng hồ thông minh</h2>
+        <a class="view-all" href="#">Xem tất cả →</a>
+      </div>
+      <div id="watch-grid" class="container product-grid"></div>
+    </section>
+  </div>
+  <div id="search-results-section" style="display:none;"></div>
   <script>
     
     // Hàm fetch sản phẩm
