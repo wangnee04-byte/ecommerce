@@ -126,7 +126,7 @@
     <nav class="quick-links">
   <a href="order.html" class="quick-item" aria-label="Tra cứu đơn hàng">🧾 Đơn hàng</a>
   <a href="cart.html" class="quick-item" aria-label="Giỏ hàng">🛒 Giỏ hàng</a>
-    <a href="admin-products.html" id="btnAdmin" class="quick-item admin-btn" aria-label="Quản trị" style="display:none;">⚙️ Admin</a>
+    <a href="admin-products.html" id="btnAdmin" class="quick-item admin-btn" aria-label="Quản trị" style="display:none;">⚙️ Quản trị</a>
 
   <!-- Nút mặc định khi chưa đăng nhập -->
   <a href="login.html" id="btnAccount" class="quick-item" aria-label="Tài khoản">👤 Tài khoản</a>
@@ -165,7 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
       roles = [roles];
     }
 
-    const canAccessAdmin = roles.includes("admin") || roles.includes("super_admin");
+    // Kiểm tra các role admin (bao gồm cả product_admin)
+    const canAccessAdmin = roles.includes("admin") || 
+                          roles.includes("super_admin") || 
+                          roles.includes("product_admin") ||
+                          roles.includes("order_admin") ||
+                          roles.includes("content_admin") ||
+                          roles.includes("report_admin");
 
     if (btnAdmin) {
       btnAdmin.style.display = canAccessAdmin ? "inline-block" : "none";

@@ -126,6 +126,35 @@ class UserModel {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    public function updateUserRoles($user_id, $role_ids) {
+        try {
+            $this->db->beginTransaction();
+            
+            // Xóa tất cả role hiện tại
+            $deleteQuery = "DELETE FROM user_role WHERE user_id = :user_id";
+            $deleteStmt = $this->db->prepare($deleteQuery);
+            $deleteStmt->bindParam(':user_id', $user_id);
+            $deleteStmt->execute();
+            
+            // Thêm các role mới
+            $insertQuery = "INSERT INTO user_role (user_id, role_id) VALUES (:user_id, :role_id)";
+            $insertStmt = $this->db->prepare($insertQuery);
+            
+            foreach ($role_ids as $role_id) {
+                $insertStmt->bindParam(':user_id', $user_id);
+                $insertStmt->bindParam(':role_id', $role_id);
+                $insertStmt->execute();
+            }
+            
+            $this->db->commit();
+            return true;
+            
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
     public function findByEmail($email) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);

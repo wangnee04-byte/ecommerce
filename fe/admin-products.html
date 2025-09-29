@@ -31,10 +31,31 @@
       if(nameEl) nameEl.textContent = (u && u.full_name) ? u.full_name : 'Khách';
       const btnLogout = document.getElementById('btnLogout');
       if(btnLogout){ btnLogout.addEventListener('click', ()=>{ localStorage.clear(); window.location.href = 'login.html'; }); }
+      
+      // Kiểm tra quyền để thao tác với nut điều hướng
+      let roles = (u && u.roles) || [];
+      if (typeof roles === "string") {
+        roles = [roles];
+      }
+      
+      const isProductAdminOnly = roles.includes('product_admin') && 
+                                !roles.includes('super_admin') && 
+                                !roles.includes('user.read') &&
+                                !roles.includes('user.role.manage');
+      
+      const userNavBtn = document.querySelector('.admin-nav a[data-nav="users"]');
+      if (userNavBtn && isProductAdminOnly) {
+        userNavBtn.style.display = 'none';
+      }
+      
       const path = (location.pathname||'').toLowerCase();
       document.querySelectorAll('.admin-nav a[data-nav]').forEach(a=>{
         const key=a.getAttribute('data-nav');
-        if((key==='products' && path.endsWith('admin-products.html')) || (key==='users' && path.endsWith('admin-users.html'))){ a.classList.add('active'); }
+        if((key==='products' && path.endsWith('admin-products.html')) || 
+           (key==='users' && path.endsWith('admin-users.html')) ||
+           (key==='orders' && path.endsWith('admin-orders.html'))){ 
+          a.classList.add('active'); 
+        }
       });
     })();
   </script>
@@ -64,7 +85,7 @@
           <th>ID</th>
           <th>Ảnh</th>
           <th>Tên sản phẩm</th>
-          <th>Loại</th>
+          <th>Thương hiệu</th>
           <th>Giá</th>
           <th>Tồn kho</th>
           <th>Hành động</th>
@@ -165,5 +186,10 @@
       </div>
     </div>
   </footer>
+  
+  <!-- Admin Authentication Guard - PHẢI load trước admin-products.js -->
+  <script src="js/admin-auth.js"></script>
+  <!-- Admin Products Script -->
+  <script src="js/admin-products.js"></script>
 </body>
 </html>

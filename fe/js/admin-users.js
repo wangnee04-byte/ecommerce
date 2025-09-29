@@ -19,6 +19,23 @@ function adminHeaderInit() {
     });
   }
   
+  // Kiểm tra role để ẩn/hiện navigation
+  let roles = (u && u.roles) || [];
+  if (typeof roles === "string") {
+    roles = [roles];
+  }
+  
+  // Ẩn nút "Sản phẩm" nếu user không có quyền product admin hoặc super admin
+  const canAccessProducts = roles.includes('super_admin') || 
+                           roles.includes('product_admin') ||
+                           roles.includes('product.read') ||
+                           roles.includes('product.create');
+  
+  const productNavBtn = document.querySelector('.admin-nav a[data-nav="products"]');
+  if (productNavBtn && !canAccessProducts) {
+    productNavBtn.style.display = 'none';
+  }
+  
   const path = (location.pathname || '').toLowerCase();
   document.querySelectorAll('.admin-nav a[data-nav]').forEach(a => {
     const key = a.getAttribute('data-nav');
@@ -253,6 +270,14 @@ async function openEdit(id) {
     document.getElementById('usrPhone').value = u.phone || '';
     document.getElementById('usrAddress').value = u.address || '';
     document.getElementById('usrCard').value = u.card || '';
+    
+    // Load user roles
+    const userRoles = await getUserRoles(id);
+    const roleSelect = document.getElementById('usrRoles');
+    Array.from(roleSelect.options).forEach(option => {
+      option.selected = userRoles.includes(parseInt(option.value));
+    });
+    
     document.getElementById('grpPassword').style.display = 'none';
     document.getElementById('usrPassword').required = false;
     document.getElementById('dlgUser').showModal();
@@ -306,6 +331,13 @@ function setupEventHandlers() {
     document.getElementById('usrPhone').value = '';
     document.getElementById('usrAddress').value = '';
     document.getElementById('usrCard').value = '';
+    
+    // Reset roles selection (default to customer)
+    const roleSelect = document.getElementById('usrRoles');
+    Array.from(roleSelect.options).forEach(option => {
+      option.selected = option.value === '2'; // Default customer role
+    });
+    
     document.getElementById('grpPassword').style.display = 'block';
     document.getElementById('usrPassword').required = true;
     document.getElementById('dlgUser').showModal();
@@ -353,6 +385,17 @@ function setupEventHandlers() {
         if (!res.ok || !data.success) {
           showMessage(data.message || 'Cập nhật thất bại', true);
           return;
+        }
+        
+        // Update user roles after successful user update
+        const roleSelect = document.getElementById('usrRoles');
+        const selectedRoles = Array.from(roleSelect.selectedOptions).map(option => parseInt(option.value));
+        
+        try {
+          await updateUserRoles(id, selectedRoles);
+        } catch (roleErr) {
+          console.error('Role update failed:', roleErr);
+          showMessage('Cập nhật thông tin thành công, nhưng lỗi khi cập nhật vai trò: ' + roleErr.message, true);
         }
         
         document.getElementById('dlgUser').close();
@@ -413,6 +456,21 @@ function setupEventHandlers() {
           return;
         }
         
+        // Assign roles to newly created user
+        if (data.data && data.data.user_id) {
+          const roleSelect = document.getElementById('usrRoles');
+          const selectedRoles = Array.from(roleSelect.selectedOptions).map(option => parseInt(option.value));
+          
+          if (selectedRoles.length > 0) {
+            try {
+              await updateUserRoles(data.data.user_id, selectedRoles);
+            } catch (roleErr) {
+              console.error('Role assignment failed for new user:', roleErr);
+              showMessage('Tạo người dùng thành công, nhưng lỗi khi gán vai trò: ' + roleErr.message, true);
+            }
+          }
+        }
+        
         document.getElementById('dlgUser').close();
         await loadUsers();
         showMessage('Đã tạo người dùng');
@@ -450,6 +508,49 @@ function setupEventHandlers() {
   });
 }
 
+
+
+async function getUserRoles(userId) {
+  try {
+    const res = await fetch(`${API_BASE}/users/${userId}/roles`, { headers: authHeaders() });
+    if (!res.ok) {
+      // Nếu endpoint không tồn tại, fallback lấy từ user info
+      const userRes = await fetch(`${API_BASE}/users/${userId}`, { headers: authHeaders() });
+      if (!userRes.ok) throw new Error(`HTTP ${userRes.status}`);
+      const userData = await userRes.json();
+      
+      // Parse roles từ string (format: "role1,role2" hoặc array)
+      if (userData.data && userData.data.role_ids) {
+        return userData.data.role_ids.split(',').map(id => parseInt(id.trim()));
+      }
+      return [2]; // Default customer role
+    }
+    
+    const data = await res.json();
+    return data.data.map(role => role.role_id || role.id);
+  } catch (err) {
+    console.error('Error getting user roles:', err);
+    return [2]; // Default customer role
+  }
+}
+
+async function updateUserRoles(userId, roleIds) {
+  const res = await fetch(`${API_BASE}/users/${userId}/roles`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ role_ids: roleIds })
+  });
+  
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `HTTP ${res.status}`);
+  }
+  
+  return await res.json();
+}
+
+
+
 // Initialization function
 async function init() {
   // Initialize admin header first
@@ -463,6 +564,8 @@ async function init() {
   
   // Setup event handlers
   setupEventHandlers();
+  
+
   
   // Resolve API and load data
   await resolveApiBase();

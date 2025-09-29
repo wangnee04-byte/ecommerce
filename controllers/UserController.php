@@ -152,4 +152,69 @@ class UserController {
     }
 }
 
+    /**
+     * Get user roles
+     * GET /api/users/{id}/roles
+     */
+    public function getUserRoles($params, $user_data) {
+        try {
+            $user_id = $params[0];
+            
+            // Only admin can view other users' roles
+            if ($user_data['user_id'] != $user_id && !$this->isAdmin($user_data)) {
+                Response::sendError('Access denied', 403);
+                return;
+            }
+            
+            $roles = $this->userModel->getUserRoles($user_id);
+            Response::sendSuccess($roles);
+            
+        } catch (Exception $e) {
+            Response::sendError('Error retrieving user roles: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Update user roles  
+     * PUT /api/users/{id}/roles
+     */
+    public function updateUserRoles($params, $user_data) {
+        try {
+            $user_id = $params[0];
+            
+            // Only admin can update user roles
+            if (!$this->isAdmin($user_data)) {
+                Response::sendError('Admin access required', 403);
+                return;
+            }
+            
+            $input = json_decode(file_get_contents('php://input'), true);
+            $role_ids = $input['role_ids'] ?? [];
+            
+            if (empty($role_ids)) {
+                Response::sendError('Role IDs are required', 400);
+                return;
+            }
+            
+            // Validate role IDs
+            foreach ($role_ids as $role_id) {
+                if (!is_numeric($role_id) || $role_id < 1) {
+                    Response::sendError('Invalid role ID: ' . $role_id, 400);
+                    return;
+                }
+            }
+            
+            $success = $this->userModel->updateUserRoles($user_id, $role_ids);
+            
+            if ($success) {
+                Response::sendSuccess(null, 'User roles updated successfully');
+            } else {
+                Response::sendError('Failed to update user roles', 500);
+            }
+            
+        } catch (Exception $e) {
+            Response::sendError('Error updating user roles: ' . $e->getMessage());
+        }
+    }
+
 }

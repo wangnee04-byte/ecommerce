@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // cart.js
 const API_BASE = "http://localhost/ecommerce_api/index.php/api";
 
-// ✅ Tạo placeholder image SVG thống nhất
+//  Tạo placeholder image SVG thống nhất
 function createPlaceholderImage(width = 150, height = 150, text = "No Image") {
   const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <rect width="${width}" height="${height}" fill="#f8f9fa"/>
@@ -163,7 +163,7 @@ async function loadCart() {
     const parsed = await safeParseResponse(res);
     const data = parsed.json || {};
 
-    // ✅ Debug logging
+    //  Debug logging
     console.log("Cart API response:", data);
     console.log("Items:", data.data?.items);
 
@@ -180,7 +180,7 @@ async function loadCart() {
 
     grid.innerHTML = "";
     data.data.items.forEach(item => {
-      // ✅ Debug từng item
+      // Debug từng item
       console.log("Processing item:", item);
       console.log("Thumbnail:", item.thumbnail);
       console.log("Product ID:", item.product_id || item.id);
@@ -188,7 +188,7 @@ async function loadCart() {
       const card = document.createElement("div");
       card.className = "accessory-card";
 
-      // ==== render ảnh với router backend - giống logic index.html ====
+      // ==== render ảnh với router backend  ====
       let thumb = Array.isArray(item.thumbnail) ? item.thumbnail[0] : item.thumbnail;
       const pid = item.product_id || item.id;
 

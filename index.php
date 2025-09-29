@@ -5,6 +5,7 @@ require_once 'utils/Response.php';
 require_once 'utils/JWT.php';
 require_once 'middleware/AuthMiddleware.php';
 require_once 'middleware/RBACMiddleware.php';
+require_once 'middleware/AdminOnlyMiddleware.php';
 
 // Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -54,6 +55,10 @@ $routes = [
     'PUT:/api/users/{id}'   => ['UserController', 'updateUser', ['user.update']],
     'DELETE:/api/users/{id}' => ['UserController', 'deleteUser', ['user.delete']],
     'GET:/api/user/profile'  => ['UserController', 'getCurrentUser', ['user.read']],
+    
+    // User role management (admin only)
+    'GET:/api/users/{id}/roles' => ['UserController', 'getUserRoles', ['user.role.manage']],
+    'PUT:/api/users/{id}/roles' => ['UserController', 'updateUserRoles', ['user.role.manage']],
 
     // Product routes
     'GET:/api/products'        => ['ProductController', 'getProducts', []], // public
@@ -99,9 +104,28 @@ $routes = [
     'PUT:/api/cart/{id}'   => ['CartController', 'updateCartItem', ['cart.manage']],
     'DELETE:/api/cart/{id}' => ['CartController', 'removeFromCart', ['cart.manage']],
 
-    // Admin routes (private)
-    'GET:/api/admin/dashboard' => ['AdminController', 'getDashboard', ['dashboard.view']],
-    'GET:/api/admin/sales'     => ['AdminController', 'getSalesReport', ['sales.view']],
+    // Admin routes (private) - Chỉ super_admin mới truy cập được
+    'GET:/api/admin/verify'           => ['AdminController', 'verifyAdmin', ['authenticated']],
+    'GET:/api/admin/dashboard'        => ['SuperAdminController', 'getDashboard', []],
+    'GET:/api/admin/sales'            => ['AdminController', 'getSalesReport', ['sales.view']],
+    'GET:/api/admin/check-access'     => ['SuperAdminController', 'checkAdminAccess', []],
+    
+    // Admin Product Management (Super Admin Only)
+    'GET:/api/admin/products'         => ['SuperAdminController', 'getAllProducts', []],
+    'POST:/api/admin/products'        => ['SuperAdminController', 'createProduct', []],
+    'PUT:/api/admin/products/{id}'    => ['SuperAdminController', 'updateProduct', []],
+    'DELETE:/api/admin/products/{id}' => ['SuperAdminController', 'deleteProduct', []],
+    
+    // Admin Order Management (Super Admin Only)
+    'GET:/api/admin/orders'                   => ['SuperAdminController', 'getAllOrders', []],
+    'PUT:/api/admin/orders/{id}/status'       => ['SuperAdminController', 'updateOrderStatus', []],
+    'PUT:/api/admin/orders/{id}/confirm'      => ['SuperAdminController', 'confirmOrder', []],
+    'PUT:/api/admin/orders/{id}/cancel'       => ['SuperAdminController', 'adminCancelOrder', []],
+    
+    // Admin User Management (Super Admin Only)  
+    'GET:/api/admin/users'            => ['SuperAdminController', 'getAllUsers', []],
+    'PUT:/api/admin/users/{id}'       => ['SuperAdminController', 'updateUser', []],
+    'DELETE:/api/admin/users/{id}'    => ['SuperAdminController', 'deleteUser', []],
      // Image routes
     'GET:/api/products/{id}/images'  => ['ImageController', 'getProductImages', []], // public
     'POST:/api/products/{id}/images' => ['ImageController', 'uploadProductImage', ['product.update']],
