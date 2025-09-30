@@ -92,6 +92,16 @@
           <label for="usrCard">Thẻ/Thông tin phụ</label>
           <input id="usrCard" placeholder="...">
         </div>
+        <div class="form-group">
+          <label for="usrRoles">Vai trò *</label>
+          <select id="usrRoles" multiple style="min-height: 100px;">
+            <option value="2">Customer (Khách hàng)</option>
+            <option value="3">Super Admin (Quản trị toàn quyền)</option>
+            <option value="4">Product Admin (Quản trị sản phẩm)</option>
+            <option value="5">Order Admin (Quản trị đơn hàng)</option>
+          </select>
+          <small class="muted">Giữ Ctrl/Cmd để chọn nhiều vai trò</small>
+        </div>
       </div>
       <div class="dlg-actions">
         <button class="btn" type="button" id="btnCancel">Hủy</button>
@@ -100,6 +110,10 @@
     </form>
   </dialog>
 
+
+
+  <!-- Admin Authentication Guard - PHẢI load trước admin-users.js -->
+  <script src="js/admin-auth.js"></script>
   <script src="js/admin-users.js"></script>
   
   <!-- Admin Footer -->

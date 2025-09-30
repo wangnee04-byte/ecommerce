@@ -6,6 +6,130 @@
   <title>Chi tiết sản phẩm - Tech Mall</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .pd-specs {
+      margin-top: 30px;
+      background: rgba(40, 44, 52, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    .panel-head {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #ffd700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ffd700;
+    }
+    
+    .pd-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px 30px;
+    }
+    
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #ffd700;
+      transition: all 0.3s ease;
+    }
+    
+    .spec-row:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+    
+    .spec-label {
+      font-weight: 500;
+      color: #e0e6ed;
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .spec-value {
+      font-weight: 600;
+      color: #fff;
+      text-align: right;
+      flex: 1;
+    }
+    
+    /* Guarantee section */
+    .pd-guarantee {
+      margin-top: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+      border-radius: 12px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .guarantee-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      color: #e0e6ed;
+      transition: all 0.3s ease;
+    }
+    
+    .guarantee-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .guarantee-item:hover {
+      color: #ffd700;
+      transform: translateX(5px);
+    }
+    
+    .guarantee-item i {
+      color: #ffd700;
+      font-size: 16px;
+      margin-right: 12px;
+      min-width: 20px;
+    }
+    
+    .guarantee-item span {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .pd-specs-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .spec-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+      
+      .spec-value {
+        text-align: left;
+      }
+      
+      .pd-guarantee {
+        margin-top: 20px;
+        padding: 15px;
+      }
+      
+      .guarantee-item {
+        font-size: 13px;
+      }
+      
+      .guarantee-item i {
+        font-size: 14px;
+        margin-right: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Top Notification -->
@@ -95,6 +219,15 @@
   </div>
 
   <script>
+    // ✅ Tạo placeholder image SVG thống nhất
+    function createPlaceholderImage(width = 300, height = 300, text = "No Image") {
+      const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+        <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="16" fill="#6c757d">${text}</text>
+      </svg>`;
+      return `data:image/svg+xml;base64,${btoa(svg)}`;
+    }
+
     async function loadProduct() {
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("id");
@@ -126,10 +259,7 @@
 
     // ===== Helpers for thumbnails & fallback images =====
     function getDefaultImagePath(){
-      // Dùng URL tuyệt đối; nếu đang mở file:// thì fallback sang http://localhost
-      const origin = window.location.origin || '';
-      const base = /^https?:/i.test(origin) ? origin : 'http://localhost';
-      return base + '/ecommerce_api/public/img/samsung-galaxy-23-ultra-tim.jpg.webp';
+      return createPlaceholderImage();
     }
     function normalizeThumbList(raw){
       if(!raw) return [];
@@ -159,7 +289,7 @@
       wrap.className = 'recom-section';
       wrap.innerHTML = `
         <div class="recom-head">
-          <h3>Sản phẩm thường mua cùng</h3>
+          <h3>Có thể bạn cũng thích</h3>
           <a href="showproduct1.html">Xem tất cả</a>
         </div>
         <div class="recom-wrap">
@@ -203,11 +333,48 @@
  function renderProductDetail(prod) {
   const container = document.getElementById("product-detail");
 
-  // Tách mô tả thành các cặp key:value theo dấu phẩy
-  const descriptionPairs = (prod.description || "")
-    .split(",")
-    .map(item => item.trim())
-    .filter(item => item.length > 0);
+  // Tách mô tả thành các cặp key:value theo dấu phẩy và dấu hai chấm
+  function parseDescription(description) {
+    if (!description) return [];
+    
+    // Tách theo dấu phẩy trước
+    const items = description.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    const pairs = [];
+    
+    items.forEach((item, index) => {
+      let key = '', value = '';
+      
+      if (item.includes(':')) {
+        // Có dấu hai chấm - tách theo dấu hai chấm
+        const colonIndex = item.indexOf(':');
+        key = item.substring(0, colonIndex).trim();
+        value = item.substring(colonIndex + 1).trim();
+      } else {
+        // Không có dấu hai chấm - thử tách theo pattern số + đơn vị
+        const match = item.match(/^(.+?)(\d+[\d\s]*(?:[a-zA-Z]+|₫|%|mAh|W|GB|TB|MP|inch|mm|g|kg).*?)$/i);
+        if (match) {
+          key = match[1].trim();
+          value = match[2].trim();
+        } else {
+          // Nếu không match được gì, dùng làm key với value trống
+          key = item;
+          value = '-';
+        }
+      }
+      
+      // Làm sạch key và value
+      key = key.replace(/^[-:\s]+|[-:\s]+$/g, '').trim();
+      value = value.replace(/^[-:\s]+|[-:\s]+$/g, '').trim();
+      
+      if (key) {
+        pairs.push({ key, value: value || '-' });
+      }
+    });
+    
+    return pairs;
+  }
+
+  const descriptionPairs = parseDescription(prod.description);
 
   const thumbs = normalizeThumbList(prod.thumbnail);
   const mainImg = thumbs[0] || getDefaultImagePath();
@@ -233,31 +400,41 @@
         <p class="pd-meta"><strong>Loại:</strong> ${prod.product_type || 'Đang cập nhật'}</p>
         <p class="pd-meta"><strong>Tồn kho:</strong> ${prod.stock_quantity || 0} sản phẩm</p>
         <div class="pd-actions">
-          <button class="btn btn-primary" onclick="window.location.href='checkout.html?id=${prod.id}'">Mua ngay</button>
-          <button class="btn btn-outline" onclick="addToCart(${prod.id})">Thêm giỏ</button>
+          <button class="btn btn-primary" onclick="addToCart(${prod.id})">Thêm vào giỏ hàng</button>
+        </div>
+        
+        <!-- Thông tin bổ sung -->
+        <div class="pd-guarantee">
+          <div class="guarantee-item">
+            <i class="fas fa-shipping-fast"></i>
+            <span>Miễn phí vận chuyển cho đơn hàng giá trị > 1 triệu đồng tại nội thành Hồ Chí Minh</span>
+          </div>
+          <div class="guarantee-item">
+            <i class="fas fa-certificate"></i>
+            <span>Đảm bảo sản phẩm chính hãng 100%</span>
+          </div>
+          <div class="guarantee-item">
+            <i class="fas fa-box"></i>
+            <span>Đảm bảo sản phẩm mới nguyên seal, chưa active</span>
+          </div>
+          <div class="guarantee-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Uy tín đặt lên hàng đầu</span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="pd-specs">
       <div class="panel-head">Thông tin chi tiết về Sản phẩm</div>
-      <table class="pd-specs-table">
-        ${descriptionPairs.map((pair, index) => {
-          let [label, ...rest] = pair.split(":");
-          let value = rest.join(":").trim();
-          if (!value) {
-            const match = pair.match(/^(.*?)(\d[\d., ]*[a-zA-Z%₫]*)$/);
-            if (match) { label = match[1].trim(); value = match[2].trim(); }
-            else { label = pair; value = "-"; }
-          }
-          return `
-            <tr>
-              <td>${label ? label.trim() : `Thông số ${index + 1}`}</td>
-              <td>${value || '-'}</td>
-            </tr>
-          `;
-        }).join("")}
-      </table>
+      <div class="pd-specs-grid">
+        ${descriptionPairs.map((pair) => `
+          <div class="spec-row">
+            <div class="spec-label">${pair.key}</div>
+            <div class="spec-value">${pair.value}</div>
+          </div>
+        `).join('')}
+      </div>
     </div>
   `;
 }
@@ -266,25 +443,38 @@
 
 
 
-    // Add to cart function
-    function addToCart(productId) {
-      // Get existing cart from localStorage
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      
-      // Check if product already exists in cart
-      const existingItem = cart.find(item => item.id == productId);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({ id: productId, quantity: 1 });
+    // Add to cart function - sử dụng API như index.html
+    async function addToCart(productId) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+        window.location.href = "login.html";
+        return;
       }
-      
-      // Save back to localStorage
-      localStorage.setItem('cart', JSON.stringify(cart));
-      
-      // Show success message
-      alert('Đã thêm sản phẩm vào giỏ hàng!');
+
+      try {
+        const res = await fetch(`http://localhost/ecommerce_api/index.php/api/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
+        } else {
+          alert("❌ Lỗi: " + data.message);
+        }
+      } catch (err) {
+        console.error("Lỗi khi thêm giỏ:", err);
+        alert("Không thể thêm vào giỏ hàng!");
+      }
     }
 
     document.addEventListener("DOMContentLoaded", loadProduct);

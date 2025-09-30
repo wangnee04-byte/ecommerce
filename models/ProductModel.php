@@ -104,16 +104,15 @@ class ProductModel {
     }
 
     private function getProductImagesFromFolder($productId) {
-        // Sử dụng ID trực tiếp vì đã được sắp xếp lại
+        // Chỉ sử dụng ID trực tiếp - đơn giản và rõ ràng
         $product_dir = "public/images/products/$productId";
-        $images = [];
         $base_url = $this->getBaseUrl();
 
         if (is_dir($product_dir)) {
             return $this->scanDirectoryForImages($product_dir, $productId, $base_url);
         }
 
-        return $images;
+        return []; // Không có ảnh thì trả về mảng rỗng
     }
 
     private function scanDirectoryForImages($directory, $folderId, $base_url) {
@@ -126,244 +125,15 @@ class ProductModel {
             
             $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
             if (in_array($extension, $allowedExtensions)) {
-                $images[] = "$base_url/api/images/products/$folderId/$file";
+                $images[] = "$base_url/index.php/api/images/products/$folderId/$file";
             }
         }
 
         return $images;
     }
 
-    private function findImageFolderByProductName($productId) {
-        // Lấy thông tin sản phẩm
-        $query = "SELECT product_name FROM Product WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $productId);
-        $stmt->execute();
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$product) return null;
-        
-        $productName = strtolower($product['product_name']);
-        
-        // Mapping rules dựa trên tên sản phẩm và tên file thực tế
-        $mappings = [
-            // Samsung (dựa trên file names thực tế)
-            's25 ultra'        => '1',
-    's25+'             => '2',
-    'z flip6'          => '3',
-    'a56 5g'           => '4',
-    'a26 5g'           => '5',
-
-    // 6 → 10: iPhone
-    'iphone 16 pro max' => '6',
-    'iphone 16 pro'     => '7',
-    'iphone 16 plus'    => '8',
-    'iphone 15 pro max' => '9',
-    'iphone 15'         => '10',
-
-    // 11 → 15: Xiaomi flagship
-    'xiaomi 15 ultra'   => '11',
-    'xiaomi 15 pro'     => '12',
-    'xiaomi 14t pro'    => '13',
-    'redmi note 14 pro' => '14',
-    'redmi note 14'     => '15',
-
-    // 16 → 20: Realme phones
-    'realme gt 6 pro'   => '16',
-    'realme gt neo 6'   => '17',
-    'realme 13 pro+'    => '18',
-    'realme 12+'        => '19',
-    'realme c67'        => '20',
-
-    // 21 → 25: Samsung Watches
-    'watch 8'           => '21',
-    'watch 8 classic'   => '22',
-    'watch ultra'       => '23',
-    'watch 7'           => '24',
-    'watch fe'          => '25',
-
-    // 26 → 30: Apple Watch
-    'watch series 9'    => '26',
-    'watch series 10'   => '27',
-    'watch ultra 2'     => '28',
-    'watch se'          => '29',
-
-    // 30 → 34: Xiaomi Watch
-    'redmi watch 5 lite'   => '30',
-    'redmi watch 5 active' => '31',
-    'watch s4 sport'       => '32',
-    'watch 2 pro'          => '33',
-    'watch s1 active'      => '34',
-
-    // 35 → 39: Realme Watch
-    'realme watch 3 pro'   => '35',
-    'realme band 3'        => '36',
-    'realme watch 3'       => '37',
-    'watch s100'           => '38',
-    'watch 2 pro'          => '39',
-
-    // 40 → 44: Laptop
-    'macbook air m2'       => '40',
-    'macbook pro 14 m3'    => '41',
-    'dell xps 13 plus'     => '42',
-    'hp spectre x360'      => '43',
-    'thinkpad x1 carbon'   => '44',
-
-    // 45 → 49: Gaming Laptop / Tablet
-    'rog strix'            => '45',
-    'ipad pro 12.9'        => '46',
-    'ipad air 5'           => '47',
-    'galaxy tab s9'        => '48',
-    'matepad 11'           => '49',
-    'xiaomi pad 6'         => '50',
-    'lenovo tab p11'       => '51',
-
-    // 52 → 56: Phụ kiện
-    'ốp lưng iphone'       => '52',
-    'sạc nhanh anker'      => '53',
-    'pin dự phòng baseus'  => '54',
-    'tai nghe xiaomi'      => '55',
-    'cáp type-c'           => '56',
-    'kính cường lực'       => '57',
-
-    // 58 → 62: Gear
-    'chuột logitech mx'    => '58',
-    'keychron'             => '59',
-    'balo asus'            => '60',
-    'cooler master'        => '61',
-    'samsung t7'           => '62',
-    'ugreen hub'           => '63',
-
-    // 64 → 68: Âm thanh
-    'sony wh-1000xm5'      => '64',
-    'airpods pro'          => '65',
-    'jbl charge'           => '66',
-    'razer blackshark'     => '67',
-    'bose soundlink flex'  => '68',
-    'sennheiser momentum'  => '69',
-
-    // 70 → 74: Smartwatch khác
-    'garmin forerunner'    => '70',
-    'amazfit gtr 4'        => '71', // huawei-watch-gt4.jpg
-            
-        ];
-        
-        // Tìm mapping phù hợp
-        foreach ($mappings as $keyword => $folderId) {
-            if (strpos($productName, $keyword) !== false) {
-                return $folderId;
-            }
-        }
-        
-        // Backup: Thử tìm theo từ khóa quan trọng (chính xác hơn)
-        $keywords = [
-            's25 ultra'        => '1',
-    's25+'             => '2',
-    'z flip6'          => '3',
-    'a56 5g'           => '4',
-    'a26 5g'           => '5',
-
-    // 6 → 10: iPhone
-    'iphone 16 pro max' => '6',
-    'iphone 16 pro'     => '7',
-    'iphone 16 plus'    => '8',
-    'iphone 15 pro max' => '9',
-    'iphone 15'         => '10',
-
-    // 11 → 15: Xiaomi flagship
-    'xiaomi 15 ultra'   => '11',
-    'xiaomi 15 pro'     => '12',
-    'xiaomi 14t pro'    => '13',
-    'redmi note 14 pro' => '14',
-    'redmi note 14'     => '15',
-
-    // 16 → 20: Realme phones
-    'realme gt 6 pro'   => '16',
-    'realme gt neo 6'   => '17',
-    'realme 13 pro+'    => '18',
-    'realme 12+'        => '19',
-    'realme c67'        => '20',
-
-    // 21 → 25: Samsung Watches
-    'watch 8'           => '21',
-    'watch 8 classic'   => '22',
-    'watch ultra'       => '23',
-    'watch 7'           => '24',
-    'watch fe'          => '25',
-
-    // 26 → 30: Apple Watch
-    'watch series 9'    => '26',
-    'watch series 10'   => '27',
-    'watch ultra 2'     => '28',
-    'watch se'          => '29',
-
-    // 30 → 34: Xiaomi Watch
-    'redmi watch 5 lite'   => '30',
-    'redmi watch 5 active' => '31',
-    'watch s4 sport'       => '32',
-    'watch 2 pro'          => '33',
-    'watch s1 active'      => '34',
-
-    // 35 → 39: Realme Watch
-    'realme watch 3 pro'   => '35',
-    'realme band 3'        => '36',
-    'realme watch 3'       => '37',
-    'watch s100'           => '38',
-    'watch 2 pro'          => '39',
-
-    // 40 → 44: Laptop
-    'macbook air m2'       => '40',
-    'macbook pro 14 m3'    => '41',
-    'dell xps 13 plus'     => '42',
-    'hp spectre x360'      => '43',
-    'thinkpad x1 carbon'   => '44',
-
-    // 45 → 49: Gaming Laptop / Tablet
-    'rog strix'            => '45',
-    'ipad pro 12.9'        => '46',
-    'ipad air 5'           => '47',
-    'galaxy tab s9'        => '48',
-    'matepad 11'           => '49',
-    'xiaomi pad 6'         => '50',
-    'lenovo tab p11'       => '51',
-
-    // 52 → 56: Phụ kiện
-    'ốp lưng iphone'       => '52',
-    'sạc nhanh anker'      => '53',
-    'pin dự phòng baseus'  => '54',
-    'tai nghe xiaomi'      => '55',
-    'cáp type-c'           => '56',
-    'kính cường lực'       => '57',
-
-    // 58 → 62: Gear
-    'chuột logitech mx'    => '58',
-    'keychron'             => '59',
-    'balo asus'            => '60',
-    'cooler master'        => '61',
-    'samsung t7'           => '62',
-    'ugreen hub'           => '63',
-
-    // 64 → 68: Âm thanh
-    'sony wh-1000xm5'      => '64',
-    'airpods pro'          => '65',
-    'jbl charge'           => '66',
-    'razer blackshark'     => '67',
-    'bose soundlink flex'  => '68',
-    'sennheiser momentum'  => '69',
-
-    // 70 → 74: Smartwatch khác
-    'garmin forerunner'    => '70',
-    'amazfit gtr 4'        => '71',
-        ];
-        
-        foreach ($keywords as $keyword => $folderId) {
-            if (strpos($productName, $keyword) !== false) {
-                return $folderId;
-            }
-        }
-        
-        return null;
-    }
+    // Hàm này đã được loại bỏ để đơn giản hóa code
+    // Thay vào đó, chỉ sử dụng ID sản phẩm trực tiếp
 
     private function getBaseUrl() {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -394,36 +164,14 @@ class ProductModel {
             }
             
             $base_url = $this->getBaseUrl();
-            return "{$base_url}/api/images/products/{$productId}/{$path}";
+            return "{$base_url}/index.php/api/images/products/{$productId}/{$path}";
         }
 
         // Không có productId thì trả về default
         return $this->getDefaultImage();
     }
 
-    private function findActualImageFolder($productId, $filename = null) {
-        // Thử tìm theo ID trực tiếp trước
-        $product_dir = "public/images/products/$productId";
-        if (is_dir($product_dir)) {
-            if (!$filename || file_exists("$product_dir/$filename")) {
-                return $productId;
-            }
-        }
-
-        // Nếu không có, thử mapping theo tên
-        $mappedId = $this->findImageFolderByProductName($productId);
-        if ($mappedId) {
-            $mapped_dir = "public/images/products/$mappedId";
-            if (is_dir($mapped_dir)) {
-                if (!$filename || file_exists("$mapped_dir/$filename")) {
-                    return $mappedId;
-                }
-            }
-        }
-
-        // Fallback về productId gốc
-        return $productId;
-    }
+    // Hàm này đã được loại bỏ - chỉ sử dụng productId trực tiếp
 
    private function getFullUrl($path) {
     // Nếu rỗng -> trả default
@@ -453,8 +201,9 @@ class ProductModel {
 
     
     private function getDefaultImage() {
-        $base_url = $this->getBaseUrl();
-        return "{$base_url}/api/images/products/default/default-product.jpg";
+        // Trả về empty string thay vì hardcode path
+        // Frontend sẽ xử lý fallback image
+        return '';
     }
     
     public function updateProductThumbnail($product_id, $image_paths) {
@@ -508,6 +257,10 @@ class ProductModel {
         $stmt->bindParam(':stock_quantity', $data['stock_quantity']);
         
         return $stmt->execute();
+    }
+    
+    public function getLastInsertId() {
+        return $this->db->lastInsertId();
     }
     
     public function updateProduct($id, $data) {

@@ -1956,3 +1956,32 @@ dialog::backdrop {
   border-color: #facc15;
   box-shadow: 0 0 5px rgba(250, 204, 21, 0.6);
 }
+
+/* Admin Role Management Styles */
+#usrRoles {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #0a0a0a;
+  color: #eee;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+#usrRoles:focus {
+  outline: none;
+  border-color: #666;
+  background: #0f0f0f;
+}
+
+#usrRoles option {
+  padding: 8px;
+  background: #0a0a0a;
+  color: #eee;
+  border: none;
+}
+
+#usrRoles option:checked {
+  background: #333;
+  color: #fff;
+}

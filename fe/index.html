@@ -26,6 +26,15 @@
       <script>
         const API_BASE = "http://localhost/ecommerce_api/index.php/api";
       
+        // ✅ Tạo placeholder image SVG thống nhất
+        function createPlaceholderImage(width = 150, height = 150, text = "No Image") {
+          const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="${width}" height="${height}" fill="#f8f9fa"/>
+            <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="#6c757d">${text}</text>
+          </svg>`;
+          return `data:image/svg+xml;base64,${btoa(svg)}`;
+        }
+      
         // Xử lý form search
         document.addEventListener("DOMContentLoaded", () => {
           const searchForm = document.querySelector(".search-box");
@@ -129,7 +138,7 @@
     <nav class="quick-links">
   <a href="order.html" class="quick-item" aria-label="Tra cứu đơn hàng">🧾 Đơn hàng</a>
   <a href="cart.html" class="quick-item" aria-label="Giỏ hàng">🛒 Giỏ hàng</a>
-    <a href="admin-products.html" id="btnAdmin" class="quick-item admin-btn" aria-label="Quản trị" style="display:none;">⚙️ Admin</a>
+    <a href="admin-products.html" id="btnAdmin" class="quick-item admin-btn" aria-label="Quản trị" style="display:none;">⚙️ Quản trị</a>
 
   <!-- Nút mặc định khi chưa đăng nhập -->
   <a href="login.html" id="btnAccount" class="quick-item" aria-label="Tài khoản">👤 Tài khoản</a>
@@ -168,7 +177,13 @@ document.addEventListener("DOMContentLoaded", () => {
       roles = [roles];
     }
 
-    const canAccessAdmin = roles.includes("admin") || roles.includes("super_admin");
+    // Kiểm tra các role admin (bao gồm cả product_admin)
+    const canAccessAdmin = roles.includes("admin") || 
+                          roles.includes("super_admin") || 
+                          roles.includes("product_admin") ||
+                          roles.includes("order_admin") ||
+                          roles.includes("content_admin") ||
+                          roles.includes("report_admin");
 
     if (btnAdmin) {
       btnAdmin.style.display = canAccessAdmin ? "inline-block" : "none";
@@ -398,21 +413,25 @@ document.addEventListener("DOMContentLoaded", () => {
         let imgUrl = "";
         if (thumb) {
           if (/^https?:\/\//i.test(thumb)) {
+            // Already full URL from API
             imgUrl = thumb;
-          } else if (thumb.startsWith("/")) {
-            // Relative to backend root
-            imgUrl = `http://localhost/ecommerce_api${thumb}`;
+          } else if (thumb.startsWith("/api/")) {
+            // Relative API path
+            imgUrl = `http://localhost/ecommerce_api/index.php${thumb}`;
           } else {
-            // Treat as filename inside products/{pid}
-            imgUrl = `http://localhost/ecommerce_api/public/images/products/${pid}/${thumb}`;
+            // Filename only - use API route
+            imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
           }
         } else {
-          imgUrl = "logo.png"; // fallback placeholder
+          imgUrl = ""; // No hardcode fallback
         }
 
         const img = document.createElement("img");
-        img.src = imgUrl;
-        img.onerror = () => { img.onerror = null; img.src = "logo.png"; };
+        img.src = imgUrl || createPlaceholderImage();
+        img.onerror = () => { 
+          img.onerror = null; 
+          img.src = createPlaceholderImage(); 
+        };
         img.alt = prod.product_name || "";
         img.style.width = "150px";
         card.appendChild(img);
@@ -501,11 +520,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // Render nhiều category
       fetchProducts(1, "phone-grid", 6);       // Điện thoại
       fetchProducts(2, "laptop-grid", 6);      // Laptop
-      fetchProducts(3, "tablet-grid", 6);      // Tablet
-      fetchProducts(4, "phone-accessory-grid", 6); // Phụ kiện điện thoại
-      fetchProducts(5, "laptop-accessory-grid", 6); // Phụ kiện laptop
-      fetchProducts(6, "audio-grid", 6);       // Âm thanh
-      fetchProducts(7, "watch-grid", 6);       // Đồng hồ
+      fetchProducts(3, "watch-grid", 6);       // Đồng hồ
+      fetchProducts(4, "laptop-accessory-grid", 6); // Phụ kiện laptop
+      fetchProducts(5, "tablet-grid", 6);      // Tablet
+      fetchProducts(6, "phone-accessory-grid", 6); // Phụ kiện điện thoại   
+      fetchProducts(7, "audio-grid", 6);       // Âm thanh
+
     
       // Load giỏ hàng nếu có
       if (typeof loadCart === 'function') {
