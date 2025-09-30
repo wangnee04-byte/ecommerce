@@ -53,6 +53,15 @@ class Validator {
         return $errors;
     }
 
+    public function validatePasswordOnly($password) {
+        $errors = [];
+        if (strlen($password) < 12) {
+            $errors['password'] = "Password phải ít nhất 12 ký tự.";
+        }
+        return $errors;
+    }
+
+
     public function validateProduct($data) {
         $errors = [];
 

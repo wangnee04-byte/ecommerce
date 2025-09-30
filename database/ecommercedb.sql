@@ -3,9 +3,15 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
+
 -- Generation Time: Sep 30, 2025 at 03:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
+
+-- Generation Time: Sep 30, 2025 at 05:29 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -50,6 +56,7 @@ CREATE TABLE `cart` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 --
 -- Dumping data for table `cart`
 --
@@ -60,6 +67,7 @@ INSERT INTO `cart` (`id`, `user_id`, `created_at`, `updated_at`) VALUES
 (3, 10, '2025-09-20 14:57:48', '2025-09-20 14:57:48'),
 (4, 12, '2025-09-27 15:14:13', '2025-09-27 15:14:13'),
 (5, 13, '2025-09-28 15:36:49', '2025-09-28 15:36:49');
+
 
 -- --------------------------------------------------------
 
@@ -75,6 +83,7 @@ CREATE TABLE `cart_items` (
   `added_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 --
 -- Dumping data for table `cart_items`
 --
@@ -83,6 +92,7 @@ INSERT INTO `cart_items` (`id`, `cart_id`, `product_id`, `quantity`, `added_at`)
 (86, 2, 3, 1, '2025-09-26 13:09:56'),
 (105, 5, 116, 1, '2025-09-28 15:36:54'),
 (108, 4, 116, 2, '2025-09-29 15:33:28');
+
 
 -- --------------------------------------------------------
 
@@ -103,6 +113,7 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`id`, `product_type`, `description`, `is_active`, `created_at`) VALUES
+
 (1, 'Điện thoại', 'Điện thoại thông minh \r\n', 1, '2025-09-09 15:09:31'),
 (2, 'Laptop', 'Máy tính xách tay', 1, '2025-09-09 15:09:31'),
 (3, 'Đồng hồ', 'Đồng hồ thông minh', 1, '2025-09-09 15:09:31'),
@@ -110,6 +121,8 @@ INSERT INTO `category` (`id`, `product_type`, `description`, `is_active`, `creat
 (5, 'Tablet\r\n', 'Máy tính bảng\r\n\r\n', 1, '2025-09-23 08:22:05'),
 (6, 'Phụ kiện điện thoại\r\n', 'Sạc, pin dự phòng, ốp lưng,...', 1, '2025-09-23 08:22:05'),
 (7, 'Âm thanh \r\n', 'Tai nghe, loa bluetooth...', 1, '2025-09-23 08:22:05');
+
+
 
 -- --------------------------------------------------------
 
@@ -172,6 +185,7 @@ CREATE TABLE `login_attempts` (
 --
 
 INSERT INTO `login_attempts` (`id`, `user_id`, `attempts`, `last_attempt`, `locked_until`) VALUES
+
 (1, 3, 0, '2025-09-26 14:08:52', NULL),
 (2, 1, 0, '2025-09-27 08:47:32', '2025-09-27 03:52:32'),
 (3, 7, 0, '2025-09-12 16:52:37', NULL),
@@ -182,6 +196,8 @@ INSERT INTO `login_attempts` (`id`, `user_id`, `attempts`, `last_attempt`, `lock
 (8, 13, 0, '2025-09-30 03:25:03', NULL),
 (9, 15, 0, '2025-09-29 15:40:57', NULL),
 (10, 17, 0, '2025-09-30 11:02:58', NULL);
+
+
 
 -- --------------------------------------------------------
 
@@ -210,6 +226,7 @@ CREATE TABLE `orders` (
   `payment_date` timestamp NULL DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Dumping data for table `orders`
@@ -303,6 +320,7 @@ INSERT INTO `orders` (`id`, `user_id`, `fullname`, `email`, `phone`, `address`, 
 (194, 12, 'Long Ho', '', '0987654321', 'DAKLAK', NULL, 'confirmed', '2025-09-27 18:28:26', 322759000.00, '2025-09-27 18:28:31', 'paypal', '9P070352067754347', 'pending', NULL, NULL, NULL, NULL, '2025-09-28 01:28:26'),
 (195, 13, 'Long Ho customer', '', '0903222424', '120 TT', NULL, 'confirmed', '2025-09-28 15:36:59', 30000000.00, '2025-09-28 15:37:03', 'paypal', '1WA45720AX3208616', 'pending', NULL, NULL, NULL, NULL, '2025-09-28 22:36:59'),
 (196, 13, 'Long Ho customer', '', '0903222424', '120 TT', NULL, 'confirmed', '2025-09-28 15:45:56', 30000000.00, '2025-09-28 15:45:58', 'cod', NULL, 'pending', NULL, NULL, NULL, NULL, '2025-09-28 22:45:56');
+
 
 -- --------------------------------------------------------
 
@@ -480,6 +498,7 @@ INSERT INTO `payments` (`id`, `order_id`, `payment_method`, `amount`, `status`, 
 (35, 182, 'paypal', 25990000.00, 'paid', '166495006F162781U', '2025-09-26 09:58:51', '2025-09-26 09:58:51'),
 (36, 187, 'momo', 36980000.00, 'paid', 'MOMO_1758891737_187', '2025-09-26 13:02:17', '2025-09-26 13:02:17');
 
+
 -- --------------------------------------------------------
 
 --
@@ -536,6 +555,7 @@ CREATE TABLE `product` (
   `id` int(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
   `product_name` varchar(100) NOT NULL,
+  `brand` varchar(100) DEFAULT NULL,
   `product_type` varchar(100) DEFAULT NULL,
   `price` decimal(18,2) NOT NULL,
   `thumbnail` varchar(255) DEFAULT NULL,
@@ -549,6 +569,7 @@ CREATE TABLE `product` (
 --
 -- Dumping data for table `product`
 --
+
 
 INSERT INTO `product` (`id`, `category_id`, `product_name`, `product_type`, `price`, `thumbnail`, `description`, `stock_quantity`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Samsung Galaxy S25 Ultra', 'Samsung', 33390000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.8sXrMDzfUzGmgfBHlUTzDQHaHa%3Fpid%3DApi&f=1&ipt=8898ce839b7a3bc21062701bc21fe151a4b6c19c5c6b3f226d09d8ee7d36f588&ipo=images\"]', 'Chip : Snapdragon 8 Elite, RAM 12GB, Bộ nhớ 256GB, Pin 5000mAh, Camera 200MP', 120, 1, '2025-09-09 15:10:34', '2025-09-27 18:20:25'),
@@ -626,6 +647,7 @@ INSERT INTO `product` (`id`, `category_id`, `product_name`, `product_type`, `pri
 (73, 6, 'Pin dự phòng Aukey Magfusion Slim 10000mAh 20W PB-MS04', 'Aukey', 1590000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP._TPPNjVqvxW_bT8E2CY8nQAAAA%3Fpid%3DApi&f=1&ipt=9e20985159383cc65faec04112aa94d1b4a0c79f00c203981ec13a8df6f23fb3&ipo=images\"]', 'Dung lượng pin 10000mAh, Công suất sạc 20W, Cổng sạc ra	\n1 x USB-C 1 x Magsafe, Cổng sạc vào, 1 x USB-C, Lõi pin Li-Polymer, Kích thước 104.3 x 67.8 x 19.2 mm, Trọng lượng 208.8 g', 30, 1, '2025-09-27 13:48:36', '2025-09-27 14:43:20'),
 (116, 1, 'iPhone 14 Pro', 'Apple', 30000000.00, '[\"https://didongviet.vn/_next/image?url=https%3A%2F%2Fcdn-v2.didongviet.vn%2Ffiles%2Fmedia%2Fcatalog%2Fproduct%2Fi%2Fp%2Fiphone-14-plus-128gb-didongviet_1.jpg&w=640&q=75\"]', 'Chip :  Apple A15 Bionic, RAM 6 GB, Bộ nhớ 256 GB, Màn hình : 6.7 inch, Pin 4325mAh', 20, 1, '2025-09-27 18:05:56', '2025-09-28 11:41:36'),
 (117, 3, 'Garmin Forerunner 265', 'Samsung', 30000000.00, '[\"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.69etAAeWPk63SwjrMrLmrQHaHa%3Fpid%3DApi&f=1&ipt=dc4d078cbb251001ddb82cc82524e00e4c987d36cfa2cb13c5c05acb18b6c79f&ipo=images\"]', 'đồng hồ thông minh, Pin : 1000mAh', 20, 1, '2025-09-29 15:35:21', '2025-09-29 15:35:21');
+
 
 -- --------------------------------------------------------
 
@@ -730,6 +752,22 @@ INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES
 -- --------------------------------------------------------
 
 --
+
+
+-- Table structure for table `search_logs`
+--
+
+CREATE TABLE `search_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `keyword` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+
 -- Table structure for table `users`
 --
 
@@ -740,9 +778,11 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `reset_token` varchar(255) DEFAULT NULL,
+  `verify_token` varchar(255) DEFAULT NULL,
   `address` text DEFAULT NULL,
   `card` varchar(50) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT 1,
+  `is_verified` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `reset_token_expiry` datetime DEFAULT NULL,
@@ -767,6 +807,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `phone`, `password`, `reset_tok
 (15, 'Quản trị sản viên sản phẩm', 'adminproducts@gmail.com', '0886922226', '$2y$10$Lg5iHrdMitC7TayhV5oJ4OhT3UzlX2a2LpHL4XCvFFZr6WGLL9BAq', NULL, '120 TT', '', 1, '2025-09-29 15:21:23', '2025-09-30 13:46:37', NULL, 0),
 (16, 'Long Ho', 'thanhlongzz@gmail.com', '0886922226', '$2y$10$FqVmZ1VNh2qICXYDZqXKCu7HAd/HScZUE3S2AR2g5w2QPPCQbpVxC', NULL, '120 TT', NULL, 0, '2025-09-29 15:37:53', '2025-09-29 15:38:15', NULL, 0),
 (17, 'admin fake', 'adminfake@gmail.com', '0886922226', '$2y$10$07RH5PhS7B1ujkfIUSGAH.45s0XKgu6o/37lGFhayUhY9xDqTlVoS', NULL, '120 TT', NULL, 0, '2025-09-30 11:02:51', '2025-09-30 11:03:27', NULL, 0);
+
 
 -- --------------------------------------------------------
 
@@ -797,6 +838,7 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
 (15, 3),
 (16, 2),
 (17, 3);
+
 
 --
 -- Indexes for dumped tables
@@ -892,7 +934,11 @@ ALTER TABLE `permission`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_product_price` (`price`),
+  ADD KEY `idx_product_brand` (`brand`),
+  ADD KEY `idx_product_category` (`category_id`),
   ADD KEY `category_id` (`category_id`);
+ALTER TABLE `product` ADD FULLTEXT KEY `idx_product_name_desc` (`product_name`,`description`);
 
 --
 -- Indexes for table `roles`
@@ -906,6 +952,13 @@ ALTER TABLE `roles`
 ALTER TABLE `role_permission`
   ADD PRIMARY KEY (`role_id`,`permission_id`),
   ADD KEY `permission_id` (`permission_id`);
+
+--
+
+-- Indexes for table `search_logs`
+--
+ALTER TABLE `search_logs`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -959,7 +1012,9 @@ ALTER TABLE `fact_sales`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
+
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -998,10 +1053,21 @@ ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+-- AUTO_INCREMENT for table `search_logs`
+--
+ALTER TABLE `search_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+
 
 --
 -- Constraints for dumped tables
@@ -1079,6 +1145,7 @@ ALTER TABLE `role_permission`
 ALTER TABLE `user_role`
   ADD CONSTRAINT `user_role_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="container cat-inner">
         <a href="showproduct1.html">Điện thoại</a>
         <a href="showproduct2.html">Laptop</a>
-        <a href="showproduct3.html">Đồng hồ</a>
+        <a href="showproduct3.html">Tablet</a>
         <a href="showproduct4.html">Phụ kiện</a>
 
       </div>
@@ -171,13 +171,29 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "product-card";
 
       // Ảnh
-    const img = document.createElement("img");
     let thumb = Array.isArray(prod.thumbnail) ? prod.thumbnail[0] : prod.thumbnail;
-    if (!thumb) thumb = 'default.png';
-    img.src = `public/images/products/${prod.id}/${thumb}`;
-      img.alt = prod.product_name;
+      const pid = prod.product_id || prod.id;
+
+      // Nếu API trả về URL sai (có "http://localhost/ecommerce_api/...")
+      if (thumb && thumb.startsWith("http://localhost/ecommerce_api/")) {
+        // cắt lấy tên file cuối cùng
+        thumb = thumb.split("/").pop();
+      }
+
+      let imgUrl;
+      if (!thumb) {
+        // không có thumbnail → bỏ qua hoặc set ảnh trống
+        imgUrl = "";
+      } else {
+        // build lại theo thư mục public/images/{id}/
+        imgUrl = `http://localhost/ecommerce_api/public/images/products/${pid}/${thumb}`;
+      }
+
+      const img = document.createElement("img");
+      img.src = imgUrl;
+      img.alt = prod.product_name || "";
       img.style.width = "150px";
-      img.style.height = "auto";
+
       card.appendChild(img);
 
       // Tên
