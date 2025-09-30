@@ -86,11 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
  <main class="login-page">
   <div class="login-container">
     <h1>Đăng nhập</h1>
-    
-    <!-- Thông báo lỗi từ admin redirect -->
-    <div id="authErrorAlert" style="display:none; background:#fee; color:#c33; padding:10px; margin:10px 0; border:1px solid #fcc; border-radius:4px;">
-    </div>
-    
     <!-- thêm id cho form -->
     <form id="loginForm">
       <!-- đổi username thành email để khớp với JS và API -->
@@ -118,20 +113,6 @@ function startInactivityTimer() {
 // Reset timer mỗi khi người dùng gõ
 document.getElementById("email").addEventListener("input", startInactivityTimer);
 document.getElementById("password").addEventListener("input", startInactivityTimer);
-
-// 🔐 Hiển thị thông báo lỗi admin redirect nếu có
-document.addEventListener('DOMContentLoaded', () => {
-  const authError = sessionStorage.getItem('authError');
-  if (authError) {
-    const alertEl = document.getElementById('authErrorAlert');
-    if (alertEl) {
-      alertEl.textContent = authError;
-      alertEl.style.display = 'block';
-    }
-    // Xóa thông báo sau khi hiển thị
-    sessionStorage.removeItem('authError');
-  }
-});
 
 // Bắt đầu đếm khi trang load
 startInactivityTimer();

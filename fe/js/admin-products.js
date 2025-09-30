@@ -41,8 +41,6 @@ const canWrite = !!token; // writes require login; RBAC enforced on server
 let currentPage = 1;
 const pageSize = 10;
 let lastCount = 0;
-let totalPages = 1;
-let pagination = null;
 
 // Utils
 function authHeaders(){ 
@@ -84,7 +82,7 @@ function showMessage(msg, isError=false){
   setTimeout(()=>div.remove(), 2800);
 }
 
-// Load categories from Categories API
+// Build categories from products (distinct)
 async function loadCategories(){
   const sel = document.getElementById('selCategory');
   const selForm = document.getElementById('prdCategory');
@@ -92,53 +90,31 @@ async function loadCategories(){
   selForm.innerHTML = '<option value="">Chọn danh mục</option>';
   
   try{
-    // Gọi API categories trực tiếp
-    const res = await fetch(API_BASE + '/categories');
+    const qs = new URLSearchParams({limit:'100', page:'1'});
+    const res = await fetch(API_BASE + '/products?' + qs.toString());
     const status = res.status; 
     const ctype = res.headers.get('content-type')||'';
     const txtRaw = await res.text(); 
     const txt = (txtRaw||'').replace(/^\uFEFF/, '').trim();
     let data; 
-    
-    try{ 
-      data = JSON.parse(txt);
-    }catch{ 
-      console.warn('Categories API non-JSON:', {status, ctype, body: txt});
-      return; 
-    }
+    try{ data = JSON.parse(txt);}catch{ data = null; }
     
     if(!data || !data.success){ 
-      console.warn('Categories API failed:', {status, ctype, body: txt}); 
+      console.warn('Categories from products failed:', {status, ctype, body: txt}); 
       return; 
     }
     
-    // Sắp xếp categories theo tên
-    const categories = (data.data || []).sort((a, b) => {
-      const nameA = a.product_type || a.name || '';
-      const nameB = b.product_type || b.name || '';
-      return nameA.localeCompare(nameB);
+    const seen = new Map();
+    (data.data||[]).forEach(p=>{ 
+      const id=p.category_id||p.categoryId; 
+      const name=p.category_name||p.categoryName; 
+      if(id && name && !seen.has(id)) seen.set(id, name);
     });
     
-    // Thêm options vào dropdown
-    categories.forEach(category => {
-      const id = category.id;
-      const name = category.product_type || category.name || `Category ${id}`;
-      
-      // Dropdown cho filter
-      const o1 = document.createElement('option'); 
-      o1.value = id; 
-      o1.textContent = name; 
-      sel.appendChild(o1);
-      
-      // Dropdown cho form thêm/sửa
-      const o2 = document.createElement('option'); 
-      o2.value = id; 
-      o2.textContent = name; 
-      selForm.appendChild(o2);
+    [...seen.entries()].sort((a,b)=>String(a[1]).localeCompare(String(b[1]))).forEach(([id,name])=>{
+      const o1=document.createElement('option'); o1.value=id; o1.textContent=name; sel.appendChild(o1);
+      const o2=document.createElement('option'); o2.value=id; o2.textContent=name; selForm.appendChild(o2);
     });
-    
-    console.log('Categories loaded:', categories.length);
-    
   }catch(err){ 
     console.warn('loadCategories error:', err); 
   }
@@ -181,29 +157,8 @@ async function loadProducts(){
       return;
     }
     
-    // Handle new response format with pagination
-    let list, paginationInfo;
-    if (data.data && data.data.data) {
-      // New format: { success: true, data: { data: [...], pagination: {...} } }
-      list = data.data.data || [];
-      paginationInfo = data.data.pagination;
-    } else {
-      // Old format: { success: true, data: [...] }
-      list = data.data || [];
-      paginationInfo = null;
-    }
-    
+    const list = data.data || []; 
     lastCount = list.length;
-    
-    // Update pagination info if available
-    if (paginationInfo) {
-      pagination = paginationInfo;
-      totalPages = paginationInfo.total_pages || 1;
-      currentPage = paginationInfo.current_page || 1;
-    } else {
-      // Fallback for old response format
-      totalPages = Math.max(1, Math.ceil(lastCount / pageSize));
-    }
     
     if(!list.length){ 
       tbody.innerHTML = '<tr><td colspan="8" class="empty">Không có sản phẩm nào</td></tr>'; 
@@ -238,22 +193,9 @@ async function loadProducts(){
 }
 
 function updatePagination(){
-  const pageLabel = document.getElementById('pageLabel');
-  
-  if (pagination && pagination.total_pages) {
-    pageLabel.textContent = `Trang ${currentPage} / ${pagination.total_pages} (${pagination.total} sản phẩm)`;
-  } else {
-    pageLabel.textContent = `Trang ${currentPage}`;
-  }
-  
+  document.getElementById('pageLabel').textContent = `Trang ${currentPage}`;
   document.getElementById('btnPrev').disabled = currentPage<=1;
-  
-  if (pagination && pagination.has_more !== undefined) {
-    document.getElementById('btnNext').disabled = !pagination.has_more;
-  } else {
-    // Fallback for old logic
-    document.getElementById('btnNext').disabled = lastCount < pageSize;
-  }
+  document.getElementById('btnNext').disabled = lastCount < pageSize;
 }
 
 // Edit dialog open
@@ -377,12 +319,8 @@ function initEventHandlers() {
       
       try{ 
         data = JSON.parse(txt);
-      }catch(parseErr){ 
-        console.error('JSON Parse Error:', parseErr);
-        console.error('Response Status:', res.status);
-        console.error('Response Headers:', res.headers.get('content-type'));
-        console.error('Raw Response:', txt.slice(0, 500)); // First 500 chars
-        showMessage(`Lỗi phản hồi từ server (${res.status}). Xem Console để debug.`, true); 
+      }catch{ 
+        showMessage('Lỗi phản hồi từ server', true); 
         return; 
       }
       

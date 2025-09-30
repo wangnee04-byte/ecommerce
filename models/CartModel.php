@@ -1,14 +1,11 @@
 <?php
 require_once 'utils/Database.php';
-require_once 'models/ProductModel.php';
 
 class CartModel {
     private $db;
-    private $productModel;
     
     public function __construct() {
         $this->db = (new Database())->getConnection();
-        $this->productModel = new ProductModel();
     }
     
     public function getCart($user_id) {
@@ -22,7 +19,7 @@ class CartModel {
         }
         
         // Get cart items
-        $query = "SELECT ci.*, p.product_name, p.price, p.thumbnail, p.id as product_id
+        $query = "SELECT ci.*, p.product_name, p.price, p.thumbnail 
                   FROM Cart_Items ci 
                   JOIN Product p ON ci.product_id = p.id 
                   WHERE ci.cart_id = :cart_id";
@@ -32,13 +29,6 @@ class CartModel {
         $stmt->execute();
         
         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // ✅ Xử lý thumbnail cho từng item bằng ProductModel
-        foreach ($items as &$item) {
-            // Sử dụng private method của ProductModel để xử lý thumbnail
-            $item['thumbnail'] = $this->processItemThumbnail($item['thumbnail'], $item['product_id']);
-        }
-        unset($item); // Phá vỡ reference
         
         // Calculate total
         $total = 0;
@@ -132,20 +122,5 @@ class CartModel {
         $stmt->bindParam(':cart_id', $cart_id);
         
         return $stmt->execute();
-    }
-    
-    /**
-     * Xử lý thumbnail cho cart item sử dụng logic của ProductModel
-     */
-    private function processItemThumbnail($thumbnail, $productId) {
-        // Sử dụng reflection để gọi private method của ProductModel
-        $reflection = new ReflectionClass($this->productModel);
-        $method = $reflection->getMethod('processThumbnail');
-        $method->setAccessible(true);
-        
-        $result = $method->invoke($this->productModel, $thumbnail, $productId);
-        
-        // Trả về ảnh đầu tiên nếu là array
-        return is_array($result) ? $result[0] : $result;
     }
 }

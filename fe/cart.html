@@ -126,15 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // cart.js
 const API_BASE = "http://localhost/ecommerce_api/index.php/api";
 
-//  Tạo placeholder image SVG thống nhất
-function createPlaceholderImage(width = 150, height = 150, text = "No Image") {
-  const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${width}" height="${height}" fill="#f8f9fa"/>
-    <text x="${width/2}" y="${height/2}" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="#6c757d">${text}</text>
-  </svg>`;
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
-}
-
 function formatCurrency(amount) {
   const n = Number(amount) || 0;
   return n.toLocaleString("vi-VN") + "₫";
@@ -163,10 +154,6 @@ async function loadCart() {
     const parsed = await safeParseResponse(res);
     const data = parsed.json || {};
 
-    //  Debug logging
-    console.log("Cart API response:", data);
-    console.log("Items:", data.data?.items);
-
     const grid = document.getElementById("cartGrid");
     const summary = document.getElementById("cartTotal");
     const payBtn = document.getElementById("payBtn");
@@ -180,50 +167,40 @@ async function loadCart() {
 
     grid.innerHTML = "";
     data.data.items.forEach(item => {
-      // Debug từng item
-      console.log("Processing item:", item);
-      console.log("Thumbnail:", item.thumbnail);
-      console.log("Product ID:", item.product_id || item.id);
-
       const card = document.createElement("div");
       card.className = "accessory-card";
 
-      // ==== render ảnh với router backend  ====
+      // ==== render ảnh với router backend ====
       let thumb = Array.isArray(item.thumbnail) ? item.thumbnail[0] : item.thumbnail;
       const pid = item.product_id || item.id;
 
-      // Accept absolute URLs directly
       let imgUrl = "";
       if (thumb) {
         if (/^https?:\/\//i.test(thumb)) {
-          // Already full URL from API
-          imgUrl = thumb;
-        } else if (thumb.startsWith("/api/")) {
-          // Relative API path
-          imgUrl = `http://localhost/ecommerce_api/index.php${thumb}`;
+          imgUrl = thumb; // absolute URL
+        } else if (thumb.startsWith("/")) {
+          imgUrl = `http://localhost/ecommerce_api${thumb}`; // relative
         } else {
-          // Filename only - use API route
-          imgUrl = `http://localhost/ecommerce_api/index.php/api/images/products/${pid}/${thumb}`;
+          // ✅ API serve ảnh sản phẩm
+          imgUrl = `http://localhost/ecommerce_api/api/images/products/${pid}/${thumb}`;
         }
       } else {
-        imgUrl = ""; // No fallback - let frontend handle
+        imgUrl = "logo.png"; // fallback placeholder
       }
 
-      console.log("Final image URL:", imgUrl);
-
-      // ✅ Tạo img element riêng để xử lý lỗi tốt hơn
       const img = document.createElement("img");
-      img.src = imgUrl || createPlaceholderImage();
+      img.src = imgUrl;
       img.onerror = () => { 
-        console.error("Ảnh lỗi:", imgUrl, "cho sản phẩm:", item.product_name);
+        console.error("Ảnh lỗi:", imgUrl);
         img.onerror = null; 
-        img.src = createPlaceholderImage();
+        img.src = "logo.png"; 
       };
       img.alt = item.product_name || "";
       img.style.width = "150px";
-      
-      // Tạo phần còn lại của card
-      card.innerHTML = `
+      card.appendChild(img);
+      // ==== hết phần ảnh ====
+
+      card.innerHTML += `
         <h3>${item.product_name}</h3>
         <p class="price">${formatCurrency(item.price)}</p>
         <div class="qty-box">
@@ -237,9 +214,6 @@ async function loadCart() {
           <button class="btn btn-outline" data-id="${item.id}">Xóa</button>
         </div>
       `;
-      
-      // Thêm img vào đầu card
-      card.insertBefore(img, card.firstChild);
 
       grid.appendChild(card);
     });
