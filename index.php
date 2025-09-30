@@ -103,10 +103,10 @@ $routes = [
 
 
     // Cart routes (private)
-    'GET:/api/cart'        => ['CartController', 'getCart', ['cart.manage']],
-    'POST:/api/cart'       => ['CartController', 'addToCart', ['cart.manage']],
-    'PUT:/api/cart/{id}'   => ['CartController', 'updateCartItem', ['cart.manage']],
-    'DELETE:/api/cart/{id}' => ['CartController', 'removeFromCart', ['cart.manage']],
+    'GET:/api/cart'        => ['CartController', 'getCart', ['authenticated']],
+    'POST:/api/cart'       => ['CartController', 'addToCart', ['authenticated']],
+    'PUT:/api/cart/{id}'   => ['CartController', 'updateCartItem', ['authenticated']],
+    'DELETE:/api/cart/{id}' => ['CartController', 'removeFromCart', ['authenticated']],
 
     // Admin routes (private) - Chỉ super_admin mới truy cập được
     'GET:/api/admin/verify'           => ['AdminController', 'verifyAdmin', ['authenticated']],
@@ -201,8 +201,12 @@ if ($matched_route) {
 
         // Nếu route yêu cầu quyền => cần Auth
         if (!empty($required_permissions)) {
+            error_log("Route requires permissions: " . implode(', ', $required_permissions));
+            
             $auth = new AuthMiddleware();
             $user_data = $auth->authenticate();
+            
+            error_log("Authenticated user: " . json_encode($user_data));
 
             // Check RBAC
             $rbac = new RBACMiddleware();
@@ -214,6 +218,7 @@ if ($matched_route) {
                 }
             }
             if (!$has_permission) {
+                error_log("Permission denied for user " . $user_data['user_id'] . " - required: " . implode(', ', $required_permissions));
                 Response::sendError('Insufficient permissions', 403);
             }
         }

@@ -453,6 +453,9 @@
       }
 
       try {
+        console.log("Adding to cart - Product ID:", productId);
+        console.log("Token:", token);
+        
         const res = await fetch(`http://localhost/ecommerce_api/index.php/api/cart`, {
           method: "POST",
           headers: {
@@ -465,7 +468,10 @@
           })
         });
 
+        console.log("Response status:", res.status);
         const data = await res.json();
+        console.log("Response data:", data);
+        
         if (data.success) {
           alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
         } else {

@@ -9,21 +9,26 @@ class RBACMiddleware {
     }
     
     public function checkPermission($user_id, $required_permission) {
+        // Debug logging
+        error_log("RBAC: Checking permission '$required_permission' for user_id: $user_id");
+        
         // Kiểm tra super admin
         if ($this->isSuperAdmin($user_id)) {
+            error_log("RBAC: User $user_id is super admin - permission granted");
             return true;
         }
 
         // "authenticated" permission: any authenticated user is allowed
         if ($required_permission === 'authenticated') {
+            error_log("RBAC: Authenticated permission granted for user_id: $user_id");
             return $user_id !== null;
         }
         
         // Kiểm tra quyền cụ thể
         $query = "SELECT p.permission_name 
-                  FROM User_Role ur 
-                  JOIN Role_Permission rp ON ur.role_id = rp.role_id 
-                  JOIN Permission p ON rp.permission_id = p.id 
+                  FROM user_role ur 
+                  JOIN role_permission rp ON ur.role_id = rp.role_id 
+                  JOIN permission p ON rp.permission_id = p.id 
                   WHERE ur.user_id = :user_id AND p.permission_name = :permission";
         
         $stmt = $this->db->prepare($query);
@@ -31,13 +36,30 @@ class RBACMiddleware {
         $stmt->bindParam(':permission', $required_permission);
         $stmt->execute();
         
-        return $stmt->rowCount() > 0;
+        $has_permission = $stmt->rowCount() > 0;
+        error_log("RBAC: Permission '$required_permission' for user_id $user_id: " . ($has_permission ? 'GRANTED' : 'DENIED'));
+        
+        if (!$has_permission) {
+            // Debug: Let's see what permissions this user actually has
+            $debug_query = "SELECT p.permission_name 
+                           FROM user_role ur 
+                           JOIN role_permission rp ON ur.role_id = rp.role_id 
+                           JOIN permission p ON rp.permission_id = p.id 
+                           WHERE ur.user_id = :user_id";
+            $debug_stmt = $this->db->prepare($debug_query);
+            $debug_stmt->bindParam(':user_id', $user_id);
+            $debug_stmt->execute();
+            $user_permissions = $debug_stmt->fetchAll(PDO::FETCH_COLUMN);
+            error_log("RBAC: User $user_id has permissions: " . implode(', ', $user_permissions));
+        }
+        
+        return $has_permission;
     }
     
     public function getUserRoles($user_id) {
         $query = "SELECT r.id, r.role_name, r.role_type 
-                  FROM User_Role ur 
-                  JOIN Roles r ON ur.role_id = r.id 
+                  FROM user_role ur 
+                  JOIN roles r ON ur.role_id = r.id 
                   WHERE ur.user_id = :user_id";
         
         $stmt = $this->db->prepare($query);
@@ -49,8 +71,8 @@ class RBACMiddleware {
     
     public function isSuperAdmin($user_id) {
         $query = "SELECT r.role_name 
-                  FROM User_Role ur 
-                  JOIN Roles r ON ur.role_id = r.id 
+                  FROM user_role ur 
+                  JOIN roles r ON ur.role_id = r.id 
                   WHERE ur.user_id = :user_id AND r.role_name = 'super_admin'";
         
         $stmt = $this->db->prepare($query);

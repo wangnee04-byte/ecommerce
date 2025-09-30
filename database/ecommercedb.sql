@@ -7,9 +7,7 @@
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -21,11 +19,10 @@ SET time_zone = "+00:00";
 -- Database: `ecommercedb`
 --
 
--- --------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS ecommercedb;
+USE ecommercedb;
 
---
--- Table structure for table `advertisement`
---
+
 
 CREATE TABLE `advertisement` (
   `id` int(11) NOT NULL,
