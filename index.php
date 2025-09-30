@@ -47,6 +47,9 @@ $routes = [
     // Auth routes (public)
     'POST:/api/register' => ['AuthController', 'register', []],
     'POST:/api/login'    => ['AuthController', 'login', []],
+    'GET:/api/verify-email' => ['AuthController', 'verifyEmail', []],
+    'GET:/api/verify-reset' => ['AuthController', 'verifyResetToken', []],
+
 
     // User routes (private)
     'GET:/api/users'        => ['UserController', 'getUsers', ['user.read']],
@@ -132,6 +135,8 @@ $routes = [
     // Forgot password (public)
      'POST:/api/forgot-password' => ['AuthController', 'forgotPassword', []],
     'POST:/api/reset-password'  => ['AuthController', 'resetPassword', []],
+    'POST:/api/forget-password-request' => ['AuthController', 'forgotPassword', []],
+
 
 ];
 
