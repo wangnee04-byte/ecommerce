@@ -69,6 +69,15 @@ class AuthController {
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
 
+            // Sinh verify token
+            $verifyToken = bin2hex(random_bytes(16));
+            $update = $this->db->prepare("UPDATE users SET verify_token = :token WHERE id = :id");
+            $update->execute([':token' => $verifyToken, ':id' => $user_id]);
+
+            // Gửi email verify
+            $this->sendVerificationEmail($email, $verifyToken);
+
+
             Response::sendSuccess(
                 ['user_id' => $user_id],
                 'User registered successfully',
@@ -89,13 +98,17 @@ class AuthController {
     $password = $data['password'];
 
     // Lấy user
-    $stmt = $this->db->prepare("SELECT id, full_name, email, password, is_active,password_changed 
+    $stmt = $this->db->prepare("SELECT id, full_name, email, password, is_active,password_changed, is_verified 
                                 FROM users WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
         Response::sendError("Invalid credentials", 401);
+    }
+
+    if ($user['is_verified'] == 0) {
+        Response::sendError("Please verify your email before login.", 403);
     }
 
     $userId = $user['id'];
@@ -193,27 +206,45 @@ private function sendResetEmail($toEmail, $token) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'fokerface04@gmail.com';       // Gmail
-        $mail->Password   = 'cafsbvhhdzupcosg';           // App password
+        $mail->Username   = 'akari020104@gmail.com';       // Gmail
+        $mail->Password   = 'joua lojn barn dfgz';           // App password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
+        $mail->CharSet = "UTF-8";   // ✅ xử lý lỗi tiếng Việt
+        $mail->Encoding = "base64"; // ✅ tránh lỗi hiển thị ký tự đặc biệt
 
-        $mail->setFrom('fokerface04@gmail.com', 'TechMall Support');
+
+        $mail->setFrom('akari020104@gmail.com', 'TechMall Support');
         $mail->addAddress($toEmail);
 
         // Tạo link reset (ẩn token bằng hash fragment)
-        $resetLink = "http://127.0.0.1:5500/test%20html/forgotpassword.html#" . urlencode($token);
+        $resetLink = "http://127.0.0.1:5500/forgotpassword.html#" . urlencode($token);
 
         // Nội dung email
         $mail->isHTML(true);
         $mail->Subject = 'Đặt lại mật khẩu của bạn';
-        $mail->Body    = "
+        $mail->Body = "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
+            <div style='background: #dc2626; color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: bold;'>
+            TechMall - Đặt lại mật khẩu
+            </div>
+            <div style='padding: 20px; color: #333;'>
             <p>Xin chào,</p>
             <p>Bạn hoặc ai đó đã yêu cầu đặt lại mật khẩu cho tài khoản của bạn.</p>
-            <p>Vui lòng nhấp vào link bên dưới để đặt lại mật khẩu (hết hạn trong 1 giờ):</p>
-            <p><a href='{$resetLink}'>{$resetLink}</a></p>
+            <p>Vui lòng nhấp vào nút bên dưới để đặt lại mật khẩu (link có hiệu lực trong <b>1 giờ</b>):</p>
+            <p style='margin: 20px 0; text-align: center;'>
+                <a href='{$resetLink}' style='background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;'>
+                Đặt lại mật khẩu
+                </a>
+            </p>
             <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+            </div>
+            <div style='background: #f1f1f1; padding: 12px; text-align: center; font-size: 12px; color: #777;'>
+            © 2025 TechMall. Mọi quyền được bảo lưu.
+            </div>
+        </div>
         ";
+
 
         // Gửi email
         if ($mail->send()) {
@@ -228,6 +259,48 @@ private function sendResetEmail($toEmail, $token) {
         return false;
     }
 }
+
+    public function sendPasswordChangedEmail($toEmail) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'akari020104@gmail.com';  // Gmail
+            $mail->Password   = 'joua lojn barn dfgz';       // App Password Gmail
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+            $mail->CharSet = "UTF-8";   // ✅ xử lý lỗi tiếng Việt
+            $mail->Encoding = "base64"; // ✅ tránh lỗi hiển thị ký tự đặc biệt
+
+            $mail->setFrom('akari020104@gmail.com', 'TechMall Support');
+            $mail->addAddress($toEmail);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Mật khẩu của bạn đã được thay đổi';
+            $mail->Body = "
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
+                <div style='background: #16a34a; color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: bold;'>
+                TechMall - Mật khẩu đã thay đổi
+                </div>
+                <div style='padding: 20px; color: #333;'>
+                <p>Xin chào,</p>
+                <p>Bạn vừa thay đổi mật khẩu thành công.</p>
+                <p>Nếu bạn không thực hiện hành động này, vui lòng liên hệ ngay với đội ngũ hỗ trợ của chúng tôi để đảm bảo an toàn cho tài khoản.</p>
+                </div>
+                <div style='background: #f1f1f1; padding: 12px; text-align: center; font-size: 12px; color: #777;'>
+                © 2025 TechMall. Mọi quyền được bảo lưu.
+                </div>
+            </div>
+            ";
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Mailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+
 
 
     // API: Quên mật khẩu
@@ -255,6 +328,79 @@ $expiry = $this->db->query("SELECT NOW() + INTERVAL 1 HOUR as expiry")->fetch()[
             return Response::sendError("Failed to send email", 500);
         }
     }
+
+    private function sendVerificationEmail($toEmail, $token) {
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'akari020104@gmail.com';  // Gmail của bạn
+            $mail->Password   = 'joua lojn barn dfgz';       // App Password Gmail
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+            $mail->CharSet = "UTF-8";   // ✅ xử lý lỗi tiếng Việt
+            $mail->Encoding = "base64"; // ✅ tránh lỗi hiển thị ký tự đặc biệt
+
+            $mail->setFrom('akari020104@gmail.com', 'TechMall Support');
+            $mail->addAddress($toEmail);
+
+            // Link verify
+            $verifyLink = "http://localhost/ecommerce_api/api/verify-email?token=" . urlencode($token);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Xác thực tài khoản của bạn';
+            $mail->Body = "
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
+                <div style='background: #2563eb; color: white; padding: 16px; text-align: center; font-size: 20px; font-weight: bold;'>
+                TechMall - Xác thực tài khoản
+                </div>
+                <div style='padding: 20px; color: #333;'>
+                <p>Xin chào,</p>
+                <p>Cảm ơn bạn đã đăng ký tài khoản tại <b>TechMall</b>.</p>
+                <p style='margin: 20px 0; text-align: center;'>
+                    <a href='{$verifyLink}' style='background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;'>
+                    Xác thực email
+                    </a>
+                </p>
+                <p>Nếu bạn không đăng ký, vui lòng bỏ qua email này.</p>
+                </div>
+                <div style='background: #f1f1f1; padding: 12px; text-align: center; font-size: 12px; color: #777;'>
+                © 2025 TechMall. Mọi quyền được bảo lưu.
+                </div>
+            </div>
+            ";
+
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Mailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+
+    public function verifyEmail($params, $user_data = null) {
+        $token = $_GET['token'] ?? null;
+        if (!$token) {
+            return Response::sendError("Token is required", 400);
+        }
+
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE verify_token = :token");
+        $stmt->execute([':token' => $token]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return Response::sendError("Invalid or expired token", 400);
+        }
+
+        // Update user
+        $update = $this->db->prepare("UPDATE users SET is_verified = 1, verify_token = NULL WHERE id = :id");
+        $update->execute([':id' => $user['id']]);
+
+        return Response::sendSuccess("Email verified successfully, you can now login.");
+    }
+
 
     // API: Reset mật khẩu
     public function resetPassword($params, $user_data = null) {
@@ -298,4 +444,18 @@ $expiry = $this->db->query("SELECT NOW() + INTERVAL 1 HOUR as expiry")->fetch()[
         }
     }
 
+    public function verifyResetToken($params, $user_data = null) {
+        $token = $_GET['token'] ?? null;
+
+        if (!$token) {
+            return Response::sendError("Token is required", 400);
+        }
+
+        $user = $this->userModel->findByResetToken($token);
+        if (!$user) {
+            return Response::sendError("Invalid or expired token", 400);
+        }
+
+        return Response::sendSuccess("Token is valid. You can reset your password now.");
+    }
 }

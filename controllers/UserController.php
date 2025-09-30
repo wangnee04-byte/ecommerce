@@ -64,20 +64,26 @@ class UserController {
 
         // Nếu có password mới thì validate
         if (!empty($data['password'])) {
+            // Validate + hash như hiện tại
             $validator = new Validator();
-            $errors = $validator->validateRegistration([
-                'full_name' => $data['full_name'] ?? $user['full_name'],
-                'email'     => $data['email'] ?? $user['email'],
-                'password'  => $data['password'],
-            ]);
+            $errors = $validator->validatePasswordOnly($data['password']);
 
-            if (!empty($errors['password'])) {
-                Response::sendError($errors['password'], 400);
+
+            if (!empty($errors)) {
+                Response::sendError('Validation failed', 400, $errors);
             }
 
-            // Nếu pass hợp lệ thì hash
             $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+
+            // Ghi nhận đã đổi mật khẩu (không reset verify)
+            $this->userModel->savePasswordChangeLog($id);
+
+            // Gửi email thông báo đổi mật khẩu
+            require_once 'controllers/AuthController.php';
+            $auth = new AuthController();
+            $auth->sendPasswordChangedEmail($user['email']); // cần tạo thêm hàm này trong AuthController
         }
+
 
         $success = $this->userModel->updateUser($id, $data);
         

@@ -9,56 +9,66 @@ class ProductModel {
     }
     
     public function getProducts($filters = [], $page = 1, $limit = 10) {
-    $offset = ($page - 1) * $limit;
-    $whereClause = "WHERE p.is_active = TRUE";
-    $params = [];
+        $offset = ($page - 1) * $limit;
+        $whereClause = "WHERE p.is_active = TRUE";
+        $params = [];
 
-    if (!empty($filters['category_id'])) {
-        $whereClause .= " AND p.category_id = :category_id";
-        $params[':category_id'] = $filters['category_id'];
+        if (!empty($filters['category_id'])) {
+            $whereClause .= " AND p.category_id = :category_id";
+            $params[':category_id'] = $filters['category_id'];
+        }
+
+        if (!empty($filters['min_price'])) {
+            $whereClause .= " AND p.price >= :min_price";
+            $params[':min_price'] = $filters['min_price'];
+        }
+
+        if (!empty($filters['max_price'])) {
+            $whereClause .= " AND p.price <= :max_price";
+            $params[':max_price'] = $filters['max_price'];
+        }
+
+        if (!empty($filters['search'])) {
+            $whereClause .= " AND (p.product_name LIKE :search OR p.description LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
+        // 🔹 Thêm ORDER BY theo sort
+        $orderBy = "ORDER BY p.created_at DESC"; // mặc định
+        if (!empty($filters['sort'])) {
+            if ($filters['sort'] === 'asc') {
+                $orderBy = "ORDER BY p.price ASC";
+            } elseif ($filters['sort'] === 'desc') {
+                $orderBy = "ORDER BY p.price DESC";
+            }
+        }
+
+        $query = "SELECT p.*, c.product_type as category_name 
+                FROM Product p 
+                LEFT JOIN Category c ON p.category_id = c.id 
+                $whereClause 
+                $orderBy 
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 🔥 Xử lý thumbnail thành full URL
+        foreach ($products as &$product) {
+            $product['thumbnail'] = $this->processThumbnail($product['thumbnail'], $product['id'] ?? null);
+        }
+
+        return $products;
     }
-
-    if (!empty($filters['min_price'])) {
-        $whereClause .= " AND p.price >= :min_price";
-        $params[':min_price'] = $filters['min_price'];
-    }
-
-    if (!empty($filters['max_price'])) {
-        $whereClause .= " AND p.price <= :max_price";
-        $params[':max_price'] = $filters['max_price'];
-    }
-
-    if (!empty($filters['search'])) {
-        $whereClause .= " AND (p.product_name LIKE :search OR p.description LIKE :search)";
-        $params[':search'] = '%' . $filters['search'] . '%';
-    }
-
-    $query = "SELECT p.*, c.product_type as category_name 
-              FROM Product p 
-              LEFT JOIN Category c ON p.category_id = c.id 
-              $whereClause 
-              ORDER BY p.created_at DESC 
-              LIMIT :limit OFFSET :offset";
-
-    $stmt = $this->db->prepare($query);
-
-    foreach ($params as $key => $value) {
-        $stmt->bindValue($key, $value);
-    }
-
-    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-    $stmt->execute();
-
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // 🔥 Xử lý thumbnail thành full URL
-    foreach ($products as &$product) {
-        $product['thumbnail'] = $this->processThumbnail($product['thumbnail'], $product['id'] ?? null);
-    }
-
-    return $products;
-}
 
     private function processThumbnail($thumbnail, $productId = null) {
         // Nếu không có thumbnail, tự động quét thư mục ảnh của sản phẩm
@@ -539,7 +549,7 @@ class ProductModel {
         
         return $stmt->execute();
     }
-    public function searchProducts($keyword, $limit = 20)
+    public function searchProducts($keyword, $limit = 20, $categoryId = null, $sort = "")
     {
         try {
             // Tách keyword thành nhiều từ
@@ -570,14 +580,35 @@ class ProductModel {
                 LEFT JOIN Category c ON p.category_id = c.id
                 WHERE p.is_active = TRUE
                 AND $whereClause
-                LIMIT :limit
             ";
+
+            // ✅ Nếu có lọc theo danh mục
+            if ($categoryId) {
+                $sql .= " AND p.category_id = :category_id";
+                $params[":category_id"] = $categoryId;
+            }
+
+            // ✅ Sắp xếp
+            if ($sort === "asc") {
+                $sql .= " ORDER BY p.price ASC";
+            } elseif ($sort === "desc") {
+                $sql .= " ORDER BY p.price DESC";
+            } else {
+                $sql .= " ORDER BY p.created_at DESC"; // mặc định: mới nhất
+            }
+
+            $sql .= " LIMIT :limit";
 
             $stmt = $this->db->prepare($sql);
 
             // Bind các param keyword
             foreach ($params as $param => $value) {
                 $stmt->bindValue($param, $value, PDO::PARAM_STR);
+            }
+
+            // Nếu có category_id thì bind kiểu INT
+            if ($categoryId) {
+                $stmt->bindValue(":category_id", (int)$categoryId, PDO::PARAM_INT);
             }
 
             // Bind limit
@@ -597,6 +628,7 @@ class ProductModel {
             return [];
         }
     }
+
 
 
     public function getRecommendedProducts($excludeId = null, $limit = 8) {

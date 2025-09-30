@@ -180,5 +180,19 @@ class UserModel {
     ");
     return $stmt->execute([$hashedPassword, $userId]);
 }
+    public function saveVerifyToken($userId, $token) {
+        $stmt = $this->db->prepare("UPDATE users SET verify_token = ?, is_verified = 0 WHERE id = ?");
+        return $stmt->execute([$token, $userId]);
+    }
+
+    public function savePasswordChangeLog($userId) {
+        $stmt = $this->db->prepare("
+            UPDATE users 
+            SET password_changed = 1, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        ");
+        return $stmt->execute([$userId]);
+    }
+
 
 }

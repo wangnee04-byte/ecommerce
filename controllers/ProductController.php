@@ -31,6 +31,11 @@ class ProductController {
                 $filters['search'] = $_GET['search'];
             }
             
+            // 🔹 Thêm sort
+            if (isset($_GET['sort']) && in_array(strtolower($_GET['sort']), ['asc', 'desc'])) {
+                $filters['sort'] = strtolower($_GET['sort']);
+            }
+
             $products = $this->productModel->getProducts($filters, $page, $limit);
             
             Response::sendSuccess($products);
@@ -129,7 +134,11 @@ class ProductController {
             $keyword = trim($_GET['q']);
             $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 20;
 
-            $products = $this->productModel->searchProducts($keyword, $limit);
+            $categoryId = isset($_GET['category_id']) ? intval($_GET['category_id']) : null;
+            $sort = isset($_GET['sort']) ? $_GET['sort'] : "";
+
+            $products = $this->productModel->searchProducts($keyword, $limit, $categoryId, $sort);
+
 
             if ($products && count($products) > 0) {
                 Response::sendSuccess($products);
