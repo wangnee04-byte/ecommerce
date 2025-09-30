@@ -19,23 +19,6 @@ function adminHeaderInit() {
     });
   }
   
-  // Kiểm tra role để ẩn/hiện navigation
-  let roles = (u && u.roles) || [];
-  if (typeof roles === "string") {
-    roles = [roles];
-  }
-  
-  // Ẩn nút "Sản phẩm" nếu user không có quyền product admin hoặc super admin
-  const canAccessProducts = roles.includes('super_admin') || 
-                           roles.includes('product_admin') ||
-                           roles.includes('product.read') ||
-                           roles.includes('product.create');
-  
-  const productNavBtn = document.querySelector('.admin-nav a[data-nav="products"]');
-  if (productNavBtn && !canAccessProducts) {
-    productNavBtn.style.display = 'none';
-  }
-  
   const path = (location.pathname || '').toLowerCase();
   document.querySelectorAll('.admin-nav a[data-nav]').forEach(a => {
     const key = a.getAttribute('data-nav');
@@ -100,8 +83,6 @@ let currentPage = 1;
 const pageSize = 10;
 let lastCount = 0;
 let cachedPage = [];
-let totalPages = 1;
-let pagination = null;
 
 // Utility functions
 function authHeaders() {
@@ -150,22 +131,9 @@ function handleUnauthorized(res, txt, data) {
 }
 
 function updatePagination() {
-  const pageLabel = document.getElementById('pageLabel');
-  
-  if (pagination && pagination.total_pages) {
-    pageLabel.textContent = `Trang ${currentPage} / ${pagination.total_pages} (${pagination.total} người dùng)`;
-  } else {
-    pageLabel.textContent = `Trang ${currentPage}`;
-  }
-  
+  document.getElementById('pageLabel').textContent = `Trang ${currentPage}`;
   document.getElementById('btnPrev').disabled = currentPage <= 1;
-  
-  if (pagination && pagination.has_more !== undefined) {
-    document.getElementById('btnNext').disabled = !pagination.has_more;
-  } else {
-    // Fallback for old logic
-    document.getElementById('btnNext').disabled = lastCount < pageSize;
-  }
+  document.getElementById('btnNext').disabled = lastCount < pageSize;
 }
 
 // User filtering and rendering
@@ -234,38 +202,13 @@ async function loadUsers() {
       return;
     }
     
-    if (!res.ok || !data.success) {
+    if (!res.ok || !Array.isArray(data.data)) {
       tbody.innerHTML = `<tr><td colspan="7" class="empty error">${data.message || 'Không tải được danh sách người dùng'}</td></tr>`;
       return;
     }
     
-    // Handle new response format with pagination
-    let userList, paginationInfo;
-    if (data.data && data.data.data) {
-      // New format: { success: true, data: { data: [...], pagination: {...} } }
-      userList = data.data.data || [];
-      paginationInfo = data.data.pagination;
-    } else if (Array.isArray(data.data)) {
-      // Old format: { success: true, data: [...] }
-      userList = data.data;
-      paginationInfo = null;
-    } else {
-      userList = [];
-      paginationInfo = null;
-    }
-    
-    cachedPage = userList;
+    cachedPage = data.data;
     lastCount = cachedPage.length;
-    
-    // Update pagination info if available
-    if (paginationInfo) {
-      pagination = paginationInfo;
-      totalPages = paginationInfo.total_pages || 1;
-      currentPage = paginationInfo.current_page || 1;
-    } else {
-      // Fallback for old response format
-      totalPages = Math.max(1, Math.ceil(lastCount / pageSize));
-    }
     
     if (!cachedPage.length) {
       tbody.innerHTML = '<tr><td colspan="7" class="empty">Không có người dùng</td></tr>';
@@ -310,14 +253,6 @@ async function openEdit(id) {
     document.getElementById('usrPhone').value = u.phone || '';
     document.getElementById('usrAddress').value = u.address || '';
     document.getElementById('usrCard').value = u.card || '';
-    
-    // Load user roles
-    const userRoles = await getUserRoles(id);
-    const roleSelect = document.getElementById('usrRoles');
-    Array.from(roleSelect.options).forEach(option => {
-      option.selected = userRoles.includes(parseInt(option.value));
-    });
-    
     document.getElementById('grpPassword').style.display = 'none';
     document.getElementById('usrPassword').required = false;
     document.getElementById('dlgUser').showModal();
@@ -327,7 +262,7 @@ async function openEdit(id) {
 }
 
 async function confirmDelete(id) {
-  if (!confirm('Vô hiệu hóa người dùng #' + id + '?\nUser sẽ không thể đăng nhập và không hiển thị trong danh sách.')) return;
+  if (!confirm('Xóa người dùng #' + id + ' ?')) return;
   
   try {
     const res = await fetch(`${API_BASE}/users/${id}`, { 
@@ -348,26 +283,14 @@ async function confirmDelete(id) {
     if (handleUnauthorized(res, txt, data)) return;
     
     if (!res.ok || !data.success) {
-      // Xử lý các thông báo lỗi từ business rules
-      let errorMessage = data.message || 'Xóa không thành công';
-      
-      // Tùy chỉnh thông báo lỗi thân thiện hơn
-      if (errorMessage.includes('không thể xóa chính mình')) {
-        errorMessage = '❌ Bạn không thể xóa tài khoản của chính mình!';
-      } else if (errorMessage.includes('cần quyền Super Admin')) {
-        errorMessage = '🔒 Chỉ Super Admin mới có thể xóa Super Admin khác!';
-      } else if (errorMessage.includes('không thể xóa Super Admin cuối cùng')) {
-        errorMessage = '🚫 Không thể xóa Super Admin cuối cùng trong hệ thống!';
-      }
-      
-      showMessage(errorMessage, true);
+      showMessage(data.message || 'Xóa không thành công', true);
       return;
     }
     
     await loadUsers();
-    showMessage('Đã vô hiệu hóa người dùng');
+    showMessage('Đã xóa người dùng');
   } catch (err) {
-    showMessage('Không thể xóa: ' + (err.message || 'Lỗi không xác định'), true);
+    showMessage('Không thể xóa', true);
   }
 }
 
@@ -383,13 +306,6 @@ function setupEventHandlers() {
     document.getElementById('usrPhone').value = '';
     document.getElementById('usrAddress').value = '';
     document.getElementById('usrCard').value = '';
-    
-    // Reset roles selection (default to customer)
-    const roleSelect = document.getElementById('usrRoles');
-    Array.from(roleSelect.options).forEach(option => {
-      option.selected = option.value === '2'; // Default customer role
-    });
-    
     document.getElementById('grpPassword').style.display = 'block';
     document.getElementById('usrPassword').required = true;
     document.getElementById('dlgUser').showModal();
@@ -437,17 +353,6 @@ function setupEventHandlers() {
         if (!res.ok || !data.success) {
           showMessage(data.message || 'Cập nhật thất bại', true);
           return;
-        }
-        
-        // Update user roles after successful user update
-        const roleSelect = document.getElementById('usrRoles');
-        const selectedRoles = Array.from(roleSelect.selectedOptions).map(option => parseInt(option.value));
-        
-        try {
-          await updateUserRoles(id, selectedRoles);
-        } catch (roleErr) {
-          console.error('Role update failed:', roleErr);
-          showMessage('Cập nhật thông tin thành công, nhưng lỗi khi cập nhật vai trò: ' + roleErr.message, true);
         }
         
         document.getElementById('dlgUser').close();
@@ -508,21 +413,6 @@ function setupEventHandlers() {
           return;
         }
         
-        // Assign roles to newly created user
-        if (data.data && data.data.user_id) {
-          const roleSelect = document.getElementById('usrRoles');
-          const selectedRoles = Array.from(roleSelect.selectedOptions).map(option => parseInt(option.value));
-          
-          if (selectedRoles.length > 0) {
-            try {
-              await updateUserRoles(data.data.user_id, selectedRoles);
-            } catch (roleErr) {
-              console.error('Role assignment failed for new user:', roleErr);
-              showMessage('Tạo người dùng thành công, nhưng lỗi khi gán vai trò: ' + roleErr.message, true);
-            }
-          }
-        }
-        
         document.getElementById('dlgUser').close();
         await loadUsers();
         showMessage('Đã tạo người dùng');
@@ -560,76 +450,6 @@ function setupEventHandlers() {
   });
 }
 
-
-
-async function getUserRoles(userId) {
-  try {
-    const res = await fetch(`${API_BASE}/users/${userId}/roles`, { headers: authHeaders() });
-    if (!res.ok) {
-      // Nếu endpoint không tồn tại, fallback lấy từ user info
-      const userRes = await fetch(`${API_BASE}/users/${userId}`, { headers: authHeaders() });
-      if (!userRes.ok) throw new Error(`HTTP ${userRes.status}`);
-      const userData = await userRes.json();
-      
-      // Parse roles từ string (format: "role1,role2" hoặc array)
-      if (userData.data && userData.data.role_ids) {
-        return userData.data.role_ids.split(',').map(id => parseInt(id.trim()));
-      }
-      return [2]; // Default customer role
-    }
-    
-    const data = await res.json();
-    return data.data.map(role => role.role_id || role.id);
-  } catch (err) {
-    console.error('Error getting user roles:', err);
-    return [2]; // Default customer role
-  }
-}
-
-async function updateUserRoles(userId, roleIds) {
-  const res = await fetch(`${API_BASE}/users/${userId}/roles`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify({ role_ids: roleIds })
-  });
-  
-  const txtRaw = await res.text();
-  const txt = (txtRaw || '').replace(/^\uFEFF/, '').trim();
-  
-  let data;
-  try {
-    data = JSON.parse(txt);
-  } catch {
-    throw new Error('Lỗi phản hồi từ server khi cập nhật vai trò');
-  }
-  
-  if (handleUnauthorized(res, txt, data)) {
-    throw new Error('Phiên đăng nhập đã hết hạn');
-  }
-  
-  if (!res.ok || !data.success) {
-    // Xử lý các thông báo lỗi từ business rules
-    let errorMessage = data.message || `Lỗi HTTP ${res.status}`;
-    
-    // Tùy chỉnh thông báo lỗi thân thiện hơn
-    if (errorMessage.includes('không thể thay đổi vai trò của chính mình')) {
-      errorMessage = '❌ Bạn không thể thay đổi vai trò của chính mình!';
-    } else if (errorMessage.includes('cần quyền Super Admin')) {
-      errorMessage = '🔒 Chỉ Super Admin mới có thể thay đổi vai trò Super Admin khác!';
-    } else if (errorMessage.includes('phải có ít nhất 1 Super Admin')) {
-      errorMessage = '⚠️ Hệ thống phải có ít nhất 1 Super Admin! Không thể xóa vai trò này.';
-    } else if (errorMessage.includes('không thể xóa Super Admin cuối cùng')) {
-      errorMessage = '🚫 Không thể xóa Super Admin cuối cùng trong hệ thống!';
-    }
-    
-    throw new Error(errorMessage);
-  }
-  
-  return data;
-}
-
-
-
 // Initialization function
 async function init() {
   // Initialize admin header first
@@ -643,8 +463,6 @@ async function init() {
   
   // Setup event handlers
   setupEventHandlers();
-  
-
   
   // Resolve API and load data
   await resolveApiBase();

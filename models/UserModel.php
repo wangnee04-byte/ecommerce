@@ -15,7 +15,6 @@ class UserModel {
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
                   LEFT JOIN roles r ON ur.role_id = r.id 
-                  WHERE u.is_active = 1
                   GROUP BY u.id 
                   LIMIT :limit OFFSET :offset";
         
@@ -32,7 +31,7 @@ class UserModel {
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
                   LEFT JOIN roles r ON ur.role_id = r.id 
-                  WHERE u.id = :id AND u.is_active = 1
+                  WHERE u.id = :id 
                   GROUP BY u.id";
         
         $stmt = $this->db->prepare($query);
@@ -105,34 +104,6 @@ class UserModel {
         return $stmt->execute();
     }
     
-    public function restoreUser($id) {
-        $query = "UPDATE users SET is_active = TRUE WHERE id = :id";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id);
-        
-        return $stmt->execute();
-    }
-    
-    public function getInactiveUsers($page = 1, $limit = 10) {
-        $offset = ($page - 1) * $limit;
-        
-        $query = "SELECT u.*, GROUP_CONCAT(r.role_name) as roles 
-                  FROM users u 
-                  LEFT JOIN user_role ur ON u.id = ur.user_id 
-                  LEFT JOIN roles r ON ur.role_id = r.id 
-                  WHERE u.is_active = 0
-                  GROUP BY u.id 
-                  LIMIT :limit OFFSET :offset";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
     public function assignRole($user_id, $role_id) {
         $query = "INSERT INTO user_role (user_id, role_id) VALUES (:user_id, :role_id) 
                   ON DUPLICATE KEY UPDATE role_id = :role_id";
@@ -154,35 +125,6 @@ class UserModel {
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
-    public function updateUserRoles($user_id, $role_ids) {
-        try {
-            $this->db->beginTransaction();
-            
-            // Xóa tất cả role hiện tại
-            $deleteQuery = "DELETE FROM user_role WHERE user_id = :user_id";
-            $deleteStmt = $this->db->prepare($deleteQuery);
-            $deleteStmt->bindParam(':user_id', $user_id);
-            $deleteStmt->execute();
-            
-            // Thêm các role mới
-            $insertQuery = "INSERT INTO user_role (user_id, role_id) VALUES (:user_id, :role_id)";
-            $insertStmt = $this->db->prepare($insertQuery);
-            
-            foreach ($role_ids as $role_id) {
-                $insertStmt->bindParam(':user_id', $user_id);
-                $insertStmt->bindParam(':role_id', $role_id);
-                $insertStmt->execute();
-            }
-            
-            $this->db->commit();
-            return true;
-            
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            throw $e;
-        }
     }
     public function findByEmail($email) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
@@ -227,7 +169,7 @@ class UserModel {
         }
     }
 
-    public function updatePassword($userId, $hashedPassword) {
+   public function updatePassword($userId, $hashedPassword) {
     $stmt = $this->db->prepare("
         UPDATE users 
         SET password = ?, 
@@ -252,27 +194,5 @@ class UserModel {
         return $stmt->execute([$userId]);
     }
 
-
-    /**
-     * Count active Super Admins in the system
-     */
-    public function countSuperAdmins() {
-        try {
-            $query = "SELECT COUNT(DISTINCT u.id) as super_admin_count 
-                      FROM users u 
-                      JOIN user_role ur ON u.id = ur.user_id 
-                      JOIN roles r ON ur.role_id = r.id 
-                      WHERE u.is_active = 1 AND r.role_name = 'super_admin'";
-            
-            $stmt = $this->db->prepare($query);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            return (int)$result['super_admin_count'];
-        } catch (Exception $e) {
-            error_log("Error counting super admins: " . $e->getMessage());
-            return 0;
-        }
-    }
 
 }

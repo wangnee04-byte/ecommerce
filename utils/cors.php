@@ -11,18 +11,12 @@ $allowed_origins = [
 ];
 
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-
-// Debug: Log origin để kiểm tra vấn đề CORS
-error_log("CORS: Origin received: " . $origin);
-
-if (!empty($origin) && in_array($origin, $allowed_origins, true)) {
+if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
     header("Vary: Origin");
-    error_log("CORS: Allowed origin: " . $origin);
 } else {
-    // Cho phép tất cả origin khi development (không an toàn cho production)
-    header("Access-Control-Allow-Origin: *");
-    error_log("CORS: Using wildcard for origin: " . $origin);
+    // Mặc định có thể để trống hoặc set một origin cố định nếu cần
+    header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
 }
 
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
