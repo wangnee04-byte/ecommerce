@@ -59,6 +59,10 @@ $routes = [
     // User role management (admin only)
     'GET:/api/users/{id}/roles' => ['UserController', 'getUserRoles', ['user.role.manage']],
     'PUT:/api/users/{id}/roles' => ['UserController', 'updateUserRoles', ['user.role.manage']],
+    
+    // User restoration (admin only)
+    'PUT:/api/users/{id}/restore' => ['UserController', 'restoreUser', ['user.update']],
+    'GET:/api/users/inactive' => ['UserController', 'getInactiveUsers', ['user.read']],
 
     // Product routes
     'GET:/api/products'        => ['ProductController', 'getProducts', []], // public

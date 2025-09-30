@@ -97,6 +97,11 @@ class AuthController {
     if (!$user) {
         Response::sendError("Invalid credentials", 401);
     }
+    
+    // Check if user account is active
+    if (!$user['is_active']) {
+        Response::sendError("Account has been deactivated. Please contact administrator.", 403);
+    }
 
     $userId = $user['id'];
 

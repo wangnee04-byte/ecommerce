@@ -17,9 +17,9 @@ class UserController {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
             
-            $users = $this->userModel->getUsers($page, $limit);
+            $result = $this->userModel->getUsers($page, $limit);
             
-            Response::sendSuccess($users);
+            Response::sendSuccess($result);
         } catch (Exception $e) {
             Response::sendError('Error retrieving users: ' . $e->getMessage());
         }
@@ -214,6 +214,56 @@ class UserController {
             
         } catch (Exception $e) {
             Response::sendError('Error updating user roles: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Restore deactivated user
+     * PUT /api/users/{id}/restore
+     */
+    public function restoreUser($params, $user_data) {
+        try {
+            $user_id = $params[0];
+            
+            // Only admin can restore users
+            if (!$this->isAdmin($user_data)) {
+                Response::sendError('Admin access required', 403);
+                return;
+            }
+            
+            $success = $this->userModel->restoreUser($user_id);
+            
+            if ($success) {
+                Response::sendSuccess(null, 'User restored successfully');
+            } else {
+                Response::sendError('Failed to restore user', 500);
+            }
+            
+        } catch (Exception $e) {
+            Response::sendError('Error restoring user: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Get inactive users
+     * GET /api/users/inactive
+     */
+    public function getInactiveUsers($params, $user_data) {
+        try {
+            // Only admin can view inactive users
+            if (!$this->isAdmin($user_data)) {
+                Response::sendError('Admin access required', 403);
+                return;
+            }
+            
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            
+            $result = $this->userModel->getInactiveUsers($page, $limit);
+            
+            Response::sendSuccess($result);
+        } catch (Exception $e) {
+            Response::sendError('Error retrieving inactive users: ' . $e->getMessage());
         }
     }
 

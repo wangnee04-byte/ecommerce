@@ -100,6 +100,8 @@ let currentPage = 1;
 const pageSize = 10;
 let lastCount = 0;
 let cachedPage = [];
+let totalPages = 1;
+let pagination = null;
 
 // Utility functions
 function authHeaders() {
@@ -148,9 +150,22 @@ function handleUnauthorized(res, txt, data) {
 }
 
 function updatePagination() {
-  document.getElementById('pageLabel').textContent = `Trang ${currentPage}`;
+  const pageLabel = document.getElementById('pageLabel');
+  
+  if (pagination && pagination.total_pages) {
+    pageLabel.textContent = `Trang ${currentPage} / ${pagination.total_pages} (${pagination.total} người dùng)`;
+  } else {
+    pageLabel.textContent = `Trang ${currentPage}`;
+  }
+  
   document.getElementById('btnPrev').disabled = currentPage <= 1;
-  document.getElementById('btnNext').disabled = lastCount < pageSize;
+  
+  if (pagination && pagination.has_more !== undefined) {
+    document.getElementById('btnNext').disabled = !pagination.has_more;
+  } else {
+    // Fallback for old logic
+    document.getElementById('btnNext').disabled = lastCount < pageSize;
+  }
 }
 
 // User filtering and rendering
@@ -219,13 +234,38 @@ async function loadUsers() {
       return;
     }
     
-    if (!res.ok || !Array.isArray(data.data)) {
+    if (!res.ok || !data.success) {
       tbody.innerHTML = `<tr><td colspan="7" class="empty error">${data.message || 'Không tải được danh sách người dùng'}</td></tr>`;
       return;
     }
     
-    cachedPage = data.data;
+    // Handle new response format with pagination
+    let userList, paginationInfo;
+    if (data.data && data.data.data) {
+      // New format: { success: true, data: { data: [...], pagination: {...} } }
+      userList = data.data.data || [];
+      paginationInfo = data.data.pagination;
+    } else if (Array.isArray(data.data)) {
+      // Old format: { success: true, data: [...] }
+      userList = data.data;
+      paginationInfo = null;
+    } else {
+      userList = [];
+      paginationInfo = null;
+    }
+    
+    cachedPage = userList;
     lastCount = cachedPage.length;
+    
+    // Update pagination info if available
+    if (paginationInfo) {
+      pagination = paginationInfo;
+      totalPages = paginationInfo.total_pages || 1;
+      currentPage = paginationInfo.current_page || 1;
+    } else {
+      // Fallback for old response format
+      totalPages = Math.max(1, Math.ceil(lastCount / pageSize));
+    }
     
     if (!cachedPage.length) {
       tbody.innerHTML = '<tr><td colspan="7" class="empty">Không có người dùng</td></tr>';
@@ -287,7 +327,7 @@ async function openEdit(id) {
 }
 
 async function confirmDelete(id) {
-  if (!confirm('Xóa người dùng #' + id + ' ?')) return;
+  if (!confirm('Vô hiệu hóa người dùng #' + id + '?\nUser sẽ không thể đăng nhập và không hiển thị trong danh sách.')) return;
   
   try {
     const res = await fetch(`${API_BASE}/users/${id}`, { 
@@ -313,7 +353,7 @@ async function confirmDelete(id) {
     }
     
     await loadUsers();
-    showMessage('Đã xóa người dùng');
+    showMessage('Đã vô hiệu hóa người dùng');
   } catch (err) {
     showMessage('Không thể xóa', true);
   }

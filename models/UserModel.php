@@ -11,10 +11,17 @@ class UserModel {
     public function getUsers($page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
         
+        // Count total records
+        $countQuery = "SELECT COUNT(*) as total FROM users WHERE is_active = 1";
+        $countStmt = $this->db->prepare($countQuery);
+        $countStmt->execute();
+        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
         $query = "SELECT u.*, GROUP_CONCAT(r.role_name) as roles 
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
                   LEFT JOIN roles r ON ur.role_id = r.id 
+                  WHERE u.is_active = 1
                   GROUP BY u.id 
                   LIMIT :limit OFFSET :offset";
         
@@ -23,7 +30,18 @@ class UserModel {
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return [
+            'data' => $users,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $limit,
+                'total' => $totalRecords,
+                'total_pages' => ceil($totalRecords / $limit),
+                'has_more' => ($page * $limit) < $totalRecords
+            ]
+        ];
     }
     
     public function getUserById($id) {
@@ -31,7 +49,7 @@ class UserModel {
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
                   LEFT JOIN roles r ON ur.role_id = r.id 
-                  WHERE u.id = :id 
+                  WHERE u.id = :id AND u.is_active = 1
                   GROUP BY u.id";
         
         $stmt = $this->db->prepare($query);
@@ -102,6 +120,51 @@ class UserModel {
         $stmt->bindParam(':id', $id);
         
         return $stmt->execute();
+    }
+    
+    public function restoreUser($id) {
+        $query = "UPDATE users SET is_active = TRUE WHERE id = :id";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id);
+        
+        return $stmt->execute();
+    }
+    
+    public function getInactiveUsers($page = 1, $limit = 10) {
+        $offset = ($page - 1) * $limit;
+        
+        // Count total inactive records
+        $countQuery = "SELECT COUNT(*) as total FROM users WHERE is_active = 0";
+        $countStmt = $this->db->prepare($countQuery);
+        $countStmt->execute();
+        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        $query = "SELECT u.*, GROUP_CONCAT(r.role_name) as roles 
+                  FROM users u 
+                  LEFT JOIN user_role ur ON u.id = ur.user_id 
+                  LEFT JOIN roles r ON ur.role_id = r.id 
+                  WHERE u.is_active = 0
+                  GROUP BY u.id 
+                  LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return [
+            'data' => $users,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $limit,
+                'total' => $totalRecords,
+                'total_pages' => ceil($totalRecords / $limit),
+                'has_more' => ($page * $limit) < $totalRecords
+            ]
+        ];
     }
     
     public function assignRole($user_id, $role_id) {

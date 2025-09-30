@@ -41,6 +41,8 @@ const canWrite = !!token; // writes require login; RBAC enforced on server
 let currentPage = 1;
 const pageSize = 10;
 let lastCount = 0;
+let totalPages = 1;
+let pagination = null;
 
 // Utils
 function authHeaders(){ 
@@ -179,8 +181,29 @@ async function loadProducts(){
       return;
     }
     
-    const list = data.data || []; 
+    // Handle new response format with pagination
+    let list, paginationInfo;
+    if (data.data && data.data.data) {
+      // New format: { success: true, data: { data: [...], pagination: {...} } }
+      list = data.data.data || [];
+      paginationInfo = data.data.pagination;
+    } else {
+      // Old format: { success: true, data: [...] }
+      list = data.data || [];
+      paginationInfo = null;
+    }
+    
     lastCount = list.length;
+    
+    // Update pagination info if available
+    if (paginationInfo) {
+      pagination = paginationInfo;
+      totalPages = paginationInfo.total_pages || 1;
+      currentPage = paginationInfo.current_page || 1;
+    } else {
+      // Fallback for old response format
+      totalPages = Math.max(1, Math.ceil(lastCount / pageSize));
+    }
     
     if(!list.length){ 
       tbody.innerHTML = '<tr><td colspan="8" class="empty">Không có sản phẩm nào</td></tr>'; 
@@ -215,9 +238,22 @@ async function loadProducts(){
 }
 
 function updatePagination(){
-  document.getElementById('pageLabel').textContent = `Trang ${currentPage}`;
+  const pageLabel = document.getElementById('pageLabel');
+  
+  if (pagination && pagination.total_pages) {
+    pageLabel.textContent = `Trang ${currentPage} / ${pagination.total_pages} (${pagination.total} sản phẩm)`;
+  } else {
+    pageLabel.textContent = `Trang ${currentPage}`;
+  }
+  
   document.getElementById('btnPrev').disabled = currentPage<=1;
-  document.getElementById('btnNext').disabled = lastCount < pageSize;
+  
+  if (pagination && pagination.has_more !== undefined) {
+    document.getElementById('btnNext').disabled = !pagination.has_more;
+  } else {
+    // Fallback for old logic
+    document.getElementById('btnNext').disabled = lastCount < pageSize;
+  }
 }
 
 // Edit dialog open

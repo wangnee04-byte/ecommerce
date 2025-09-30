@@ -33,6 +33,19 @@ class ProductModel {
         $params[':search'] = '%' . $filters['search'] . '%';
     }
 
+    // Count total records with same filters
+    $countQuery = "SELECT COUNT(*) as total 
+                   FROM Product p 
+                   LEFT JOIN Category c ON p.category_id = c.id 
+                   $whereClause";
+    
+    $countStmt = $this->db->prepare($countQuery);
+    foreach ($params as $key => $value) {
+        $countStmt->bindValue($key, $value);
+    }
+    $countStmt->execute();
+    $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
     $query = "SELECT p.*, c.product_type as category_name 
               FROM Product p 
               LEFT JOIN Category c ON p.category_id = c.id 
@@ -57,7 +70,16 @@ class ProductModel {
         $product['thumbnail'] = $this->processThumbnail($product['thumbnail'], $product['id'] ?? null);
     }
 
-    return $products;
+    return [
+        'data' => $products,
+        'pagination' => [
+            'current_page' => $page,
+            'per_page' => $limit,
+            'total' => $totalRecords,
+            'total_pages' => ceil($totalRecords / $limit),
+            'has_more' => ($page * $limit) < $totalRecords
+        ]
+    ];
 }
 
     private function processThumbnail($thumbnail, $productId = null) {

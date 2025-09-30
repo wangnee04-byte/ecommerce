@@ -31,9 +31,9 @@ class ProductController {
                 $filters['search'] = $_GET['search'];
             }
             
-            $products = $this->productModel->getProducts($filters, $page, $limit);
+            $result = $this->productModel->getProducts($filters, $page, $limit);
             
-            Response::sendSuccess($products);
+            Response::sendSuccess($result);
         } catch (Exception $e) {
             Response::sendError('Error retrieving products: ' . $e->getMessage());
         }
