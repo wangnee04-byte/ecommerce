@@ -348,14 +348,26 @@ async function confirmDelete(id) {
     if (handleUnauthorized(res, txt, data)) return;
     
     if (!res.ok || !data.success) {
-      showMessage(data.message || 'Xóa không thành công', true);
+      // Xử lý các thông báo lỗi từ business rules
+      let errorMessage = data.message || 'Xóa không thành công';
+      
+      // Tùy chỉnh thông báo lỗi thân thiện hơn
+      if (errorMessage.includes('không thể xóa chính mình')) {
+        errorMessage = '❌ Bạn không thể xóa tài khoản của chính mình!';
+      } else if (errorMessage.includes('cần quyền Super Admin')) {
+        errorMessage = '🔒 Chỉ Super Admin mới có thể xóa Super Admin khác!';
+      } else if (errorMessage.includes('không thể xóa Super Admin cuối cùng')) {
+        errorMessage = '🚫 Không thể xóa Super Admin cuối cùng trong hệ thống!';
+      }
+      
+      showMessage(errorMessage, true);
       return;
     }
     
     await loadUsers();
     showMessage('Đã vô hiệu hóa người dùng');
   } catch (err) {
-    showMessage('Không thể xóa', true);
+    showMessage('Không thể xóa: ' + (err.message || 'Lỗi không xác định'), true);
   }
 }
 
@@ -581,12 +593,39 @@ async function updateUserRoles(userId, roleIds) {
     body: JSON.stringify({ role_ids: roleIds })
   });
   
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `HTTP ${res.status}`);
+  const txtRaw = await res.text();
+  const txt = (txtRaw || '').replace(/^\uFEFF/, '').trim();
+  
+  let data;
+  try {
+    data = JSON.parse(txt);
+  } catch {
+    throw new Error('Lỗi phản hồi từ server khi cập nhật vai trò');
   }
   
-  return await res.json();
+  if (handleUnauthorized(res, txt, data)) {
+    throw new Error('Phiên đăng nhập đã hết hạn');
+  }
+  
+  if (!res.ok || !data.success) {
+    // Xử lý các thông báo lỗi từ business rules
+    let errorMessage = data.message || `Lỗi HTTP ${res.status}`;
+    
+    // Tùy chỉnh thông báo lỗi thân thiện hơn
+    if (errorMessage.includes('không thể thay đổi vai trò của chính mình')) {
+      errorMessage = '❌ Bạn không thể thay đổi vai trò của chính mình!';
+    } else if (errorMessage.includes('cần quyền Super Admin')) {
+      errorMessage = '🔒 Chỉ Super Admin mới có thể thay đổi vai trò Super Admin khác!';
+    } else if (errorMessage.includes('phải có ít nhất 1 Super Admin')) {
+      errorMessage = '⚠️ Hệ thống phải có ít nhất 1 Super Admin! Không thể xóa vai trò này.';
+    } else if (errorMessage.includes('không thể xóa Super Admin cuối cùng')) {
+      errorMessage = '🚫 Không thể xóa Super Admin cuối cùng trong hệ thống!';
+    }
+    
+    throw new Error(errorMessage);
+  }
+  
+  return data;
 }
 
 

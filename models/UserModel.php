@@ -11,12 +11,6 @@ class UserModel {
     public function getUsers($page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
         
-        // Count total records
-        $countQuery = "SELECT COUNT(*) as total FROM users WHERE is_active = 1";
-        $countStmt = $this->db->prepare($countQuery);
-        $countStmt->execute();
-        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-        
         $query = "SELECT u.*, GROUP_CONCAT(r.role_name) as roles 
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
@@ -30,18 +24,7 @@ class UserModel {
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         
-        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return [
-            'data' => $users,
-            'pagination' => [
-                'current_page' => $page,
-                'per_page' => $limit,
-                'total' => $totalRecords,
-                'total_pages' => ceil($totalRecords / $limit),
-                'has_more' => ($page * $limit) < $totalRecords
-            ]
-        ];
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getUserById($id) {
@@ -134,12 +117,6 @@ class UserModel {
     public function getInactiveUsers($page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
         
-        // Count total inactive records
-        $countQuery = "SELECT COUNT(*) as total FROM users WHERE is_active = 0";
-        $countStmt = $this->db->prepare($countQuery);
-        $countStmt->execute();
-        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-        
         $query = "SELECT u.*, GROUP_CONCAT(r.role_name) as roles 
                   FROM users u 
                   LEFT JOIN user_role ur ON u.id = ur.user_id 
@@ -153,18 +130,7 @@ class UserModel {
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         
-        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return [
-            'data' => $users,
-            'pagination' => [
-                'current_page' => $page,
-                'per_page' => $limit,
-                'total' => $totalRecords,
-                'total_pages' => ceil($totalRecords / $limit),
-                'has_more' => ($page * $limit) < $totalRecords
-            ]
-        ];
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function assignRole($user_id, $role_id) {
@@ -261,7 +227,7 @@ class UserModel {
         }
     }
 
-   public function updatePassword($userId, $hashedPassword) {
+    public function updatePassword($userId, $hashedPassword) {
     $stmt = $this->db->prepare("
         UPDATE users 
         SET password = ?, 
@@ -272,5 +238,27 @@ class UserModel {
     ");
     return $stmt->execute([$hashedPassword, $userId]);
 }
+
+    /**
+     * Count active Super Admins in the system
+     */
+    public function countSuperAdmins() {
+        try {
+            $query = "SELECT COUNT(DISTINCT u.id) as super_admin_count 
+                      FROM users u 
+                      JOIN user_role ur ON u.id = ur.user_id 
+                      JOIN roles r ON ur.role_id = r.id 
+                      WHERE u.is_active = 1 AND r.role_name = 'super_admin'";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return (int)$result['super_admin_count'];
+        } catch (Exception $e) {
+            error_log("Error counting super admins: " . $e->getMessage());
+            return 0;
+        }
+    }
 
 }

@@ -112,6 +112,24 @@ class UserController {
                 Response::sendError('User not found', 404);
             }
             
+            // Business Rule: Prevent deleting Super Admins if you're not Super Admin
+            $targetUserRoles = $this->userModel->getUserRoles($id);
+            $targetIsSuperAdmin = $this->isUserSuperAdmin($targetUserRoles);
+            
+            if ($targetIsSuperAdmin && !$this->isSuperAdmin($user_data)) {
+                Response::sendError('Only Super Admins can delete other Super Admin accounts', 403);
+                return;
+            }
+            
+            // Business Rule: Ensure at least one Super Admin exists in the system
+            if ($targetIsSuperAdmin) {
+                $superAdminCount = $this->userModel->countSuperAdmins();
+                if ($superAdminCount <= 1) {
+                    Response::sendError('Cannot delete the last Super Admin: At least one Super Admin must exist in the system', 403);
+                    return;
+                }
+            }
+            
             $success = $this->userModel->deleteUser($id);
             
             if ($success) {
@@ -130,6 +148,25 @@ class UserController {
                in_array('order_admin', $user_data['roles']) || 
                in_array('content_admin', $user_data['roles']) || 
                in_array('report_admin', $user_data['roles']);
+    }
+    
+    /**
+     * Check if user is Super Admin
+     */
+    private function isSuperAdmin($user_data) {
+        return in_array('super_admin', $user_data['roles']);
+    }
+    
+    /**
+     * Check if user roles contain super_admin
+     */
+    private function isUserSuperAdmin($user_roles) {
+        foreach ($user_roles as $role) {
+            if ($role['role_name'] === 'super_admin' || $role['id'] == 3) {
+                return true;
+            }
+        }
+        return false;
     }
     public function getCurrentUser($params, $user_data) {
     try {
@@ -188,6 +225,27 @@ class UserController {
                 return;
             }
             
+            // Business Rule: Prevent Super Admins from modifying their own roles
+            if ($user_data['user_id'] == $user_id && $this->isSuperAdmin($user_data)) {
+                Response::sendError('Super Admins cannot modify their own roles for security reasons', 403);
+                return;
+            }
+            
+            // Business Rule: Prevent modifying roles of other Super Admins (unless you are also Super Admin)
+            $targetUser = $this->userModel->getUserById($user_id);
+            if (!$targetUser) {
+                Response::sendError('User not found', 404);
+                return;
+            }
+            
+            $targetUserRoles = $this->userModel->getUserRoles($user_id);
+            $targetIsSuperAdmin = $this->isUserSuperAdmin($targetUserRoles);
+            
+            if ($targetIsSuperAdmin && !$this->isSuperAdmin($user_data)) {
+                Response::sendError('Only Super Admins can modify other Super Admin roles', 403);
+                return;
+            }
+            
             $input = json_decode(file_get_contents('php://input'), true);
             $role_ids = $input['role_ids'] ?? [];
             
@@ -200,6 +258,16 @@ class UserController {
             foreach ($role_ids as $role_id) {
                 if (!is_numeric($role_id) || $role_id < 1) {
                     Response::sendError('Invalid role ID: ' . $role_id, 400);
+                    return;
+                }
+            }
+            
+            // Business Rule: Ensure at least one Super Admin exists in the system
+            // If this is the last Super Admin and we're removing super_admin role, prevent it
+            if ($targetIsSuperAdmin && !in_array(3, $role_ids)) { // Assuming role ID 3 is super_admin
+                $superAdminCount = $this->userModel->countSuperAdmins();
+                if ($superAdminCount <= 1) {
+                    Response::sendError('Cannot remove Super Admin role: At least one Super Admin must exist in the system', 403);
                     return;
                 }
             }
