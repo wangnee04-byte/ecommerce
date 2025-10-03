@@ -1,6 +1,7 @@
 <?php
 require_once 'models/CartModel.php';
 require_once 'utils/Response.php';
+require_once 'utils/Database.php';
 
 class CartController {
     private $cartModel;
@@ -56,7 +57,36 @@ class CartController {
                 Response::sendError('Quantity is required', 400);
             }
             
-            $success = $this->cartModel->updateCartItem($item_id, $data['quantity']);
+            // Get product info for stock validation
+            $query = "SELECT p.stock_quantity, p.product_name, ci.product_id 
+                      FROM cart_items ci 
+                      JOIN product p ON ci.product_id = p.id 
+                      WHERE ci.id = :item_id";
+            
+            $db = (new Database())->getConnection();
+            $stmt = $db->prepare($query);
+            $stmt->bindParam(':item_id', $item_id);
+            $stmt->execute();
+            
+            $item = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$item) {
+                Response::sendError('Cart item not found', 404);
+            }
+            
+            $stockQuantity = intval($item['stock_quantity']);
+            $requestedQuantity = intval($data['quantity']);
+            
+            // Validate stock
+            if ($requestedQuantity > $stockQuantity) {
+                Response::sendError("Cannot update quantity to {$requestedQuantity}. Only {$stockQuantity} items available for {$item['product_name']}", 400);
+            }
+            
+            if ($stockQuantity <= 0) {
+                Response::sendError("Product {$item['product_name']} is out of stock", 400);
+            }
+            
+            $success = $this->cartModel->updateCartItemWithStockCheck($item_id, $requestedQuantity, $stockQuantity);
             
             if ($success) {
                 Response::sendSuccess([], 'Cart item updated successfully');

@@ -68,6 +68,82 @@
       border: 1px solid rgba(255, 215, 0, 0.2);
     }
     
+    /* Quantity controls */
+    .pd-quantity {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(40, 44, 52, 0.5);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .pd-quantity label {
+      display: block;
+      color: #ffd700;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .quantity-controls button {
+      width: 35px;
+      height: 35px;
+      border: 1px solid #ffd700;
+      background: rgba(255, 215, 0, 0.1);
+      color: #ffd700;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .quantity-controls button:hover {
+      background: rgba(255, 215, 0, 0.2);
+    }
+    
+    .quantity-controls input {
+      width: 80px;
+      height: 35px;
+      text-align: center;
+      border: 1px solid #ffd700;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .quantity-controls input:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+    
+    .quantity-note {
+      font-size: 12px;
+      color: #aaa;
+      font-style: italic;
+    }
+    
+    /* Disabled button */
+    .btn-disabled {
+      background: #666 !important;
+      color: #999 !important;
+      border-color: #666 !important;
+      cursor: not-allowed !important;
+    }
+    
+    .btn-disabled:hover {
+      background: #666 !important;
+      transform: none !important;
+    }
+    
     .guarantee-item {
       display: flex;
       align-items: center;
@@ -315,7 +391,10 @@
                   <div class="recom-price">${priceStr}</div>
                   <div class="recom-actions">
                     <a class="btn btn-primary" href="product.html?id=${p.id}">Xem</a>
-                    <button class="btn btn-outline" onclick="addToCart(${p.id})">Thêm</button>
+                    ${p.stock_quantity > 0 ? 
+                      `<button class="btn btn-outline" onclick="addToCart(${p.id})">Thêm giỏ</button>` :
+                      `<button class="btn btn-disabled" disabled>Hết hàng</button>`
+                    }
                   </div>
                 </div>`;
             }).join('')}
@@ -399,9 +478,25 @@
         </div>
         <p class="pd-meta"><strong>Loại:</strong> ${prod.product_type || 'Đang cập nhật'}</p>
         <p class="pd-meta"><strong>Tồn kho:</strong> ${prod.stock_quantity || 0} sản phẩm</p>
-        <div class="pd-actions">
-          <button class="btn btn-primary" onclick="addToCart(${prod.id})">Thêm vào giỏ hàng</button>
-        </div>
+        
+        ${prod.stock_quantity > 0 ? `
+          <div class="pd-quantity">
+            <label for="quantity">Số lượng:</label>
+            <div class="quantity-controls">
+              <button type="button" onclick="decreaseQuantity()">-</button>
+              <input type="number" id="quantity" value="1" min="1" max="${prod.stock_quantity}" onchange="validateQuantity(${prod.stock_quantity})">
+              <button type="button" onclick="increaseQuantity(${prod.stock_quantity})">+</button>
+            </div>
+            <span class="quantity-note">Tối đa ${prod.stock_quantity} sản phẩm</span>
+          </div>
+          <div class="pd-actions">
+            <button class="btn btn-primary" onclick="addToCartWithQuantity(${prod.id}, ${prod.stock_quantity})">Thêm vào giỏ hàng</button>
+          </div>
+        ` : `
+          <div class="pd-actions">
+            <button class="btn btn-disabled" disabled>Hết hàng</button>
+          </div>
+        `}
         
         <!-- Thông tin bổ sung -->
         <div class="pd-guarantee">
@@ -443,7 +538,95 @@
 
 
 
-    // Add to cart function - sử dụng API như index.html
+    // Quantity management functions
+    function increaseQuantity(maxStock) {
+      const input = document.getElementById('quantity');
+      const currentValue = parseInt(input.value);
+      if (currentValue < maxStock) {
+        input.value = currentValue + 1;
+      } else {
+        alert(`⚠️ Số lượng tối đa là ${maxStock} sản phẩm`);
+      }
+    }
+    
+    function decreaseQuantity() {
+      const input = document.getElementById('quantity');
+      const currentValue = parseInt(input.value);
+      if (currentValue > 1) {
+        input.value = currentValue - 1;
+      }
+    }
+    
+    function validateQuantity(maxStock) {
+      const input = document.getElementById('quantity');
+      let value = parseInt(input.value);
+      
+      if (isNaN(value) || value < 1) {
+        input.value = 1;
+        return;
+      }
+      
+      if (value > maxStock) {
+        input.value = maxStock;
+        alert(`⚠️ Số lượng tối đa là ${maxStock} sản phẩm`);
+      }
+    }
+
+    // Enhanced add to cart function with quantity validation
+    async function addToCartWithQuantity(productId, stockQuantity) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bạn cần đăng nhập để thêm vào giỏ hàng!");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const quantityInput = document.getElementById('quantity');
+      const quantity = parseInt(quantityInput.value);
+
+      // Validate quantity
+      if (isNaN(quantity) || quantity < 1) {
+        alert("⚠️ Vui lòng nhập số lượng hợp lệ!");
+        return;
+      }
+
+      if (quantity > stockQuantity) {
+        alert(`⚠️ Số lượng yêu cầu (${quantity}) vượt quá tồn kho (${stockQuantity})`);
+        quantityInput.value = stockQuantity;
+        return;
+      }
+
+      try {
+        console.log("Adding to cart - Product ID:", productId, "Quantity:", quantity);
+        
+        const res = await fetch(`http://localhost/ecommerce_api/index.php/api/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity
+          })
+        });
+
+        console.log("Response status:", res.status);
+        const data = await res.json();
+        console.log("Response data:", data);
+        
+        if (data.success) {
+          alert(`✅ Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
+        } else {
+          alert("❌ Lỗi: " + data.message);
+        }
+      } catch (err) {
+        console.error("Lỗi khi thêm giỏ:", err);
+        alert("Không thể thêm vào giỏ hàng!");
+      }
+    }
+
+    // Keep the original addToCart function for compatibility with recommendation section
     async function addToCart(productId) {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -453,9 +636,6 @@
       }
 
       try {
-        console.log("Adding to cart - Product ID:", productId);
-        console.log("Token:", token);
-        
         const res = await fetch(`http://localhost/ecommerce_api/index.php/api/cart`, {
           method: "POST",
           headers: {
@@ -468,10 +648,7 @@
           })
         });
 
-        console.log("Response status:", res.status);
         const data = await res.json();
-        console.log("Response data:", data);
-        
         if (data.success) {
           alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
         } else {
